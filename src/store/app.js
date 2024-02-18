@@ -12,6 +12,7 @@ export const useStorage =defineStore('storage',{
     totalPages:10,
     currentPage:1,
     movies:[],
+    counter:1
   }),
   actions:{
     async getMovies(search){
