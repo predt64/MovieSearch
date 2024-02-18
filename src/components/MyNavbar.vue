@@ -30,7 +30,7 @@ import {useStorage} from '@/store/app.js';
 
 <style lang="scss" scoped>
 .navbar__wrapper{
-  background: linear-gradient(to right, rgb(231, 68, 18), rgb(255, 98, 78));;
+  background: linear-gradient(to right, rgb(231, 68, 18), rgb(255, 98, 78));
 
 }
 .wrapper{
