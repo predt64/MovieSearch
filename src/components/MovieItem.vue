@@ -1,6 +1,6 @@
 <template>
   <div class="upper-wrapper">
-    <div class="wrapper">
+    <div class="wrapper" @click="show = 0">
       <div class="img-info-wrapper">
         <div class="poster">
           <img
@@ -81,18 +81,24 @@
         </div>
 
         <div class="actions__add-to-favourite">
-          <button class="add__button">
-            <span class="material-icons heart" @click="addedToFavorite">favorite</span>
+          <button class="add__button" @click="addToFavorite">
+            <span class="material-icons heart" :class="[{ heart_red: liked }]"
+              >favorite</span
+            >
             В избранное
           </button>
         </div>
 
         <div class="actions__evaluate">
-          <button class="actions__evaluate__button" @click="show = !show">
-            <span class="material-icons star">star</span>
+          <button class="actions__evaluate__button" @click.stop="show = !show">
+            <span class="material-icons star" :class="[{ star_yellow: rating }]"
+              >star</span
+            >
           </button>
           <div class="actions__evaluate__bar_box">
             <v-rating
+              v-model="rating"
+              @click.stop
               class="actions__evaluate__bar"
               v-if="show == 1"
               active-color="darkred"
@@ -107,29 +113,97 @@
 </template>
 
 <script>
+import { useStorage } from "@/store/app.js";
+
 export default {
-  emits:['addedToFavorite'],
+  setup() {
+    const storage = useStorage();
+    return { storage };
+  },
+
   props: {
     movie: {
       type: Object,
       required: true,
     },
   },
+
   data() {
     return {
+      liked: this.checkLiked(),
       show: 0,
-      rating: 0,
+      rating: this.checkRating(),
     };
   },
+
   methods: {
-    addedToFavorite(){
-        this.$emit('addedToFavorite', this.movie.id);
-      },
+    checkLiked() {
+      //если в БД есть фильм с таким id и у него проставлен лайк
+      return this.storage.favMovies.some(
+        (el) => el.id == this.movie.id && el.liked == 1
+      );
+    },
+    checkRating() {
+      if (
+        this.storage.favMovies.some(
+          (el) => el.id == this.movie.id && el.userRating != undefined
+        )
+      )
+      return this.storage.favMovies.filter((el) => el.id==this.movie.id)[0].userRating
+      else return 0;
+    },
+
+    addToFavorite() {
+      let flag = 0;
+      //проверяем есть ли уже фильм с таким id в базе и добавлен ли был в избранное
+      this.storage.favMovies.forEach((movie, index) => {
+        if (movie.id == this.movie.id) {
+          if (movie.liked != undefined) {
+            //если у фильма есть оценка, то только удаляем поле like
+            if (movie.userRating != undefined) {
+              delete movie.liked;
+              this.liked = 0;
+            }
+            //если нет оценки, то удаляем чтобы не засорять память
+            else {
+              this.storage.favMovies.splice(index, 1);
+              this.liked = 0;
+            }
+            //если была только оценка то добавляем в избранное
+          } else {
+            movie.liked = 1;
+            this.liked = 1;
+          }
+          flag = 1;
+        }
+      });
+      if (flag == 0) {
+        this.storage.favMovies.push(this.movie);
+        this.storage.favMovies[this.storage.favMovies.length - 1].liked = 1;
+        this.liked = 1;
+      }
+    },
     numberWithSpaces(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     },
     checkClicked() {
       return this.show;
+    },
+  },
+  watch: {
+    rating() {
+      let flag = 0;
+      this.storage.favMovies.forEach((el) => {
+        if (el.id == this.movie.id) {
+          el.userRating = this.rating;
+          flag = 1;
+        }
+      });
+      if (flag == 0) {
+        this.storage.favMovies.push(this.movie);
+        this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
+          this.rating;
+      }
     },
   },
 };
@@ -223,6 +297,9 @@ export default {
   transform: scale(1.1);
   transition: 0.2s;
 }
+.heart_red {
+  color: red;
+}
 .add__button:hover .heart {
   color: red;
   transition: 0.2s;
@@ -246,12 +323,15 @@ export default {
   border-radius: 17px;
   transition: 0.2s;
 }
+.star_yellow {
+  color: rgb(255, 231, 92);
+}
 .actions__evaluate__button:hover {
   transform: scale(1.1);
   transition: 0.2s;
 }
 .actions__evaluate__button:hover .star {
-  color: gold;
+  color: rgb(255, 231, 92);
   transition: 0.2s;
 }
 </style>

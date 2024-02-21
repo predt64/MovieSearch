@@ -1,32 +1,40 @@
-import {defineStore} from 'pinia'
-const url="https://api.kinopoisk.dev/v1.4/movie/search?limit=25&page="
-const urlId='https://api.kinopoisk.dev/v1.4/movie/'
-const options={
-  method:'GET',
-  headers: {accept: 'application/json', 'X-API-KEY': '4ADT0P3-B4T4584-QAXQZ8V-KJ31MK4'},
-};
+import { defineStore } from "pinia";
+const url = "http://localhost:3031/docs?_limit=25&_page=";
+const engLetters = /[a-zA-Z]/;
 
-export const useStorage =defineStore('storage',{
-  state:()=>({
-    loader:false,
-    totalPages:10,
-    currentPage:1,
-    movies:[],
-    counter:1
+export const useStorage = defineStore("storage", {
+  state: () => ({
+    loader: false,
+    totalPages: 0,
+    currentPage: 1,
+    movieSearch: "",
+    movies: [],
+    favMovies:[],
   }),
-  actions:{
-    async getMovies(search){
-      this.loader=true;
-      const res = await fetch(`${url}${this.currentPage}&query=${search}`,options);
+  actions: {
+    async getMovies(search,sortType='') {
+      this.loader = true;
+      let res;
+
+      //если введено английское слово, ищем по соответсвующему ключу
+      if (engLetters.test(search))
+        res = await fetch(`${url}${this.currentPage}&alternativeName_like=${search}&_sort=${sortType}&_order=desc`);
+
+      else 
+        res = await fetch(`${url}${this.currentPage}&name_like=${search}&_sort=${sortType}&_order=desc`);
+
       const data = await res.json();
-      this.totalPages=data.pages;
-      this.movies=data.docs;
-      this.loader=false;
+
+      //подсчет количества страниц. не уверен, что это нужно делать именно тут, но вроде удобно
+      (this.totalPages = Math.ceil(res.headers.get("x-total-count") / 25)),
+        (this.movies = data);
+      this.movieSearch = search;
+      this.loader = false;
     },
     async getMovieById(id){
-      const res = await fetch(`${urlId}${id}`,options)
+      const res = await fetch(`http://localhost:3031/docs?id=${id}`)
       const data = await res.json();
-      this.movies=data.docs;
+      return data
     }
   },
-})
+});

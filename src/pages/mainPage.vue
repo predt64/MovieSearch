@@ -1,24 +1,27 @@
 <template>
-  <header class="header">
-    <div class="search">
-      <div class="search__title">
-        <p class="search__title_main">Fast. Convinient. Reliable.</p>
-        <p class="search__title_subtitle">
-          Unlock the magic of movies with our ultimate Movie Searcher!
-        </p>
-      </div>
-      <div class="search__input">
-        <my-input v-model="movieCurrent" @search="search" />
-      </div>
-    </div>
-  </header>
-  <main class="main">
-    <movie-pages
-      v-if="!storage.loader && storage.movies.length > 0"
-      color="white"
-      :request="movieCurrent"
-    />
+  <my-navbar @refresh="refresh" :main="1" />
 
+  <header class="header">
+    <my-search v-model="movieCurrent" @search="search">
+      <p class="search__title_main">Fast. Convinient. Reliable.</p>
+      <p class="search__title_subtitle">
+        Unlock the magic of movies with our ultimate Movie Searcher!
+      </p>
+    </my-search>
+  </header>
+
+  <main class="main">
+    <div
+      class="pages-select__wrapper"
+      v-if="!storage.loader && storage.movies.length > 0"
+    >
+      <movie-pages color="white" :request="movieCurrent" />
+      <my-select
+        v-model="selectedSort"
+        :options="selectOptions"
+        class="select"
+      />
+    </div>
     <my-loader v-if="storage.loader" class="loader" />
     <movie-item
       v-else-if="storage.movies.length > 0"
@@ -40,12 +43,13 @@
 </template>
 
 <script>
-import myInput from "@/UI/MyInput.vue";
-import myLoader from "@/UI/MyLoader.vue";
 import MoviePages from "@/components/MoviePages.vue";
 import MovieItem from "@/components/MovieItem.vue";
+import MySearch from "@/components/MySearch.vue";
+import MyNavbar from "@/components/MyNavbar";
 import { useStorage } from "@/store/app.js";
 import { mapActions } from "pinia";
+import { ref } from "vue";
 
 export default {
   setup() {
@@ -53,32 +57,51 @@ export default {
     return { storage };
   },
   components: {
-    myInput,
-    myLoader,
     MovieItem,
     MoviePages,
+    MySearch,
+    MyNavbar,
   },
   data() {
     return {
-      movieCurrent: "",
+      movieCurrent: ref(""),
       currentPage: this.storage.currentPage,
+      selectedSort: "По умолчанию",
+      sortValue: "",
+      selectOptions: ["По рейтингу", "По дате выхода", "По хронометражу"],
     };
   },
   methods: {
     ...mapActions(useStorage, ["$subscribe"]),
     search() {
+      this.selectedSort = "По умолчанию";
       this.storage.currentPage = 1;
       this.storage.getMovies(this.movieCurrent);
     },
     addToFavorite() {
       //добавить в локалсторэдж id
     },
+    refresh() {
+      this.movieCurrent = "";
+      this.storage.getMovies(this.movieCurrent);
+    },
+  },
+  watch: {
+    selectedSort() {
+      this.storage.currentPage = 1;
+      if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
+      else if (this.selectedSort == "По хронометражу")
+        this.sortValue = "movieLength";
+      else this.sortValue = "year";
+      this.storage.getMovies(this.movieCurrent, this.sortValue);
+    },
   },
   mounted() {
     this.storage.getMovies("");
+
     this.$subscribe((mutation, state) => {
       if (state.currentPage != this.currentPage) {
-        this.storage.getMovies(this.movieCurrent);
+        this.storage.getMovies(this.movieCurrent, this.sortValue);
         this.currentPage = state.currentPage;
       }
     });
@@ -87,6 +110,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search__title_main {
+  font-size: 50px;
+  font-weight: 800;
+}
+.search__title_subtitle {
+  font-size: 30px;
+}
 .v-card {
   box-shadow: none;
 }
@@ -96,34 +126,20 @@ export default {
 .v-field__append-inner {
   cursor: pointer !important;
 }
-.header {
-  background-image: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.8) 0,
-      rgba(0, 0, 0, 0.5) 60%,
-      rgba(0, 0, 0, 0.7) 100%
-    ),
-    url(@/img/bgimage.jpg);
-  background-size: cover;
-  background-position: center;
+.main {
+  background-color: white !important;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 0.4) 90%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
   background-repeat: no-repeat;
-  padding-top: 120px;
-  padding-bottom: 105px;
-}
-.search__input {
   text-align: center;
-  margin-top: 40px;
+  min-height: 371px;
 }
-.search__title {
-  text-align: center;
+.main__error {
   color: white;
-}
-.search__title_main {
-  font-size: 50px;
-  font-weight: 800;
-}
-.search__title_subtitle {
-  font-size: 30px;
 }
 .main__error {
   text-align: center;
@@ -132,5 +148,16 @@ export default {
 }
 .loader {
   height: 371px;
+}
+.pages-select__wrapper {
+  position: relative;
+  display: flex;
+  max-width: 1080px;
+  margin: 0 auto;
+  justify-content: center;
+}
+.select {
+  position: absolute;
+  right: 0px;
 }
 </style>
