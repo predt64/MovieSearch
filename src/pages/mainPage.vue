@@ -65,7 +65,8 @@ export default {
   data() {
     return {
       movieCurrent: ref(""),
-      currentPage: this.storage.currentPage,
+      //сделать чтобы было = 1
+      currentPage: 1,
       selectedSort: "По умолчанию",
       sortValue: "",
       selectOptions: ["По рейтингу", "По дате выхода", "По хронометражу"],
@@ -76,24 +77,31 @@ export default {
     search() {
       this.selectedSort = "По умолчанию";
       this.storage.currentPage = 1;
+      this.currentPage = 1;
       this.storage.getMovies(this.movieCurrent);
     },
     addToFavorite() {
       //добавить в локалсторэдж id
     },
     refresh() {
+      this.storage.currentPage = 1;
+      this.currentPage = 1;
       this.movieCurrent = "";
+      this.selectedSort = "По умолчанию";
       this.storage.getMovies(this.movieCurrent);
     },
   },
   watch: {
     selectedSort() {
-      this.storage.currentPage = 1;
-      if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
-      else if (this.selectedSort == "По хронометражу")
-        this.sortValue = "movieLength";
-      else this.sortValue = "year";
-      this.storage.getMovies(this.movieCurrent, this.sortValue);
+      if (this.selectedSort != "По умолчанию") {
+        this.storage.currentPage = 1;
+        this.currentPage = 1;
+        if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
+        else if (this.selectedSort == "По хронометражу")
+          this.sortValue = "movieLength";
+        else this.sortValue = "year";
+        this.storage.getMovies(this.movieCurrent, this.sortValue);
+      }
     },
   },
   mounted() {
@@ -135,16 +143,12 @@ export default {
     rgba(0, 0, 0, 0.3) 100%
   );
   background-repeat: no-repeat;
-  text-align: center;
   min-height: 371px;
 }
 .main__error {
   color: white;
-}
-.main__error {
-  text-align: center;
   font-size: 60px;
-  height: 371px;
+  text-align: center;
 }
 .loader {
   height: 371px;

@@ -5,7 +5,9 @@
         <slot></slot>  
       
     </div>
+    <!-- вэлью и модел вэлью объеденить? -->
     <div class="search__input">
+      
       <my-input v-if="!disableSearch" :model-value="modelValue" @input="updateInput" @search="search" :value="modelValue"/>
     </div>
   </div>

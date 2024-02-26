@@ -25,7 +25,7 @@
             >Главная</router-link
           >
           <router-link
-            to="favourite"
+            to="/favourite"
             :class="{
               navbar__references__item: true,
               active: fav,

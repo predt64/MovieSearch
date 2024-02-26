@@ -12,7 +12,7 @@ const routes = [
     component: () => import("@/pages/favouriteMovies.vue"),
   },
   {
-    path: "/movie",
+    path: "/movie/:id",
     component: () => import("@/pages/movieFullInfo.vue"),
   },
 ];

@@ -2,6 +2,7 @@
   <div>
     <button class="mybutton">
     <slot></slot>
+    
     </button>
   </div>
 </template>

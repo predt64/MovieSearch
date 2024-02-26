@@ -1,112 +1,81 @@
 <template>
   <div class="upper-wrapper">
-    <div class="wrapper" @click="show = 0">
-      <div class="img-info-wrapper">
-        <div class="poster">
-          <img
-            v-if="this.movie.poster.previewUrl !== null"
-            :src="this.movie.poster.previewUrl"
-            alt="logo"
-            class="poster__image"
-          />
-          <img
-            v-else
-            src="https://res.cloudinary.com/shop-consoles-ru/image/upload/c_scale,w_1000/v1568607967/images/no_image_avalible_jwqnxa.jpg"
-            alt="logo"
-            class="poster__image"
-          />
-        </div>
+    <div class="wrapper" @click="show = false">
+      <router-link :to="'/movie/' + movie.id" class="link">
+        <div class="img-info-wrapper">
+          <div class="poster">
+            <img
+              v-if="this.movie.poster.previewUrl !== null"
+              :src="this.movie.poster.previewUrl"
+              alt="logo"
+              class="poster__image"
+            />
+            <img
+              v-else
+              src="https://res.cloudinary.com/shop-consoles-ru/image/upload/c_scale,w_1000/v1568607967/images/no_image_avalible_jwqnxa.jpg"
+              alt="logo"
+              class="poster__image"
+            />
+          </div>
 
-        <div class="info">
-          <p class="info__name">
-            {{ this.movie.name }}
-          </p>
-          <div class="info__subtitle__wrapper">
-            <p class="info__subtitle">
-              <span v-if="this.movie.alternativeName">
-                {{ this.movie.alternativeName }},
-              </span>
-              <span v-else-if="this.movie.enName">
-                {{ this.movie.enName }},
-              </span>
-              <span v-else> —, </span>
-
-              <span v-if="this.movie.year"> {{ this.movie.year }}, </span>
-              <span v-else> —, </span>
-
-              <span v-if="movie.movieLength">
-                {{ this.movie.movieLength }} мин.
-              </span>
-              <span v-else> — </span>
+          <div class="info">
+            <p class="info__name">
+              {{ this.movie.name }}
             </p>
+            <div class="info__subtitle__wrapper">
+              <p class="info__subtitle">
+                <span v-if="this.movie.alternativeName">
+                  {{ this.movie.alternativeName }},
+                </span>
+                <span v-else-if="this.movie.enName">
+                  {{ this.movie.enName }},
+                </span>
+                <span v-else> —, </span>
 
-            <p class="info__sub-subtitle">
-              <span
-                class="info__sub-subtitlle__country"
-                v-if="movie.countries.length > 0"
-                >{{ movie.countries[0].name }} •
-              </span>
-              <span v-else> — </span>
-              <span
-                class="info__sub-subtitlle__genre"
-                v-if="movie.genres.length > 0"
-                >{{ movie.genres[0].name }}</span
-              >
-              <span v-else> — </span>
-            </p>
+                <span v-if="this.movie.year"> {{ this.movie.year }}, </span>
+                <span v-else> —, </span>
+
+                <span v-if="movie.movieLength">
+                  {{ this.movie.movieLength }} мин.
+                </span>
+                <span v-else> — </span>
+              </p>
+
+              <p class="info__sub-subtitle">
+                <span
+                  class="info__sub-subtitlle__country"
+                  v-if="movie.countries.length > 0"
+                  >{{ movie.countries[0].name }} •
+                </span>
+                <span v-else> — </span>
+                <span
+                  class="info__sub-subtitlle__genre"
+                  v-if="movie.genres.length > 0"
+                  >{{ movie.genres[0].name }}</span
+                >
+                <span v-else> — </span>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
+      </router-link>
       <div class="actions">
-        <div class="actions__rating">
-          <span
-            :class="{
-              actions__rating__number: true,
-              actions__rating__number_gold: movie.rating.kp.toFixed(1) >= 8,
-              actions__rating__number_green:
-                movie.rating.kp.toFixed(1) >= 7 &&
-                movie.rating.kp.toFixed(1) < 8,
-              actions__rating__number_red: movie.rating.kp.toFixed(1) < 6,
-            }"
-            v-if="movie.rating.kp > 0"
-            >{{ movie.rating.kp.toFixed(1) }}</span
-          >
-          <span v-else> — </span>
+        
+        <rating-number :movie="movie"/>
 
-          <span class="actions__rating-votes" v-if="movie.votes.kp > 0">{{
-            numberWithSpaces(movie.votes.kp)
-          }}</span>
-          <span v-else> — </span>
-        </div>
+        <button-favourite
+          @liked="liked = 1"
+          @disliked="liked = 0"
+          :liked="liked"
+          :movie="movie"
+        />
 
-        <div class="actions__add-to-favourite">
-          <button class="add__button" @click="addToFavorite">
-            <span class="material-icons heart" :class="[{ heart_red: liked }]"
-              >favorite</span
-            >
-            В избранное
-          </button>
-        </div>
-
-        <div class="actions__evaluate">
-          <button class="actions__evaluate__button" @click.stop="show = !show">
-            <span class="material-icons star" :class="[{ star_yellow: rating }]"
-              >star</span
-            >
-          </button>
-          <div class="actions__evaluate__bar_box">
-            <v-rating
-              v-model="rating"
-              @click.stop
-              class="actions__evaluate__bar"
-              v-if="show == 1"
-              active-color="darkred"
-              half-increments
-              hover
-            ></v-rating>
-          </div>
-        </div>
+        <my-rating
+          v-model="rating"
+          :show="show"
+          @changeShow="this.show = !this.show"
+          :id="movie.id"
+        />
       </div>
     </div>
   </div>
@@ -120,7 +89,6 @@ export default {
     const storage = useStorage();
     return { storage };
   },
-
   props: {
     movie: {
       type: Object,
@@ -131,7 +99,7 @@ export default {
   data() {
     return {
       liked: this.checkLiked(),
-      show: 0,
+      show: false,
       rating: this.checkRating(),
     };
   },
@@ -149,45 +117,9 @@ export default {
           (el) => el.id == this.movie.id && el.userRating != undefined
         )
       )
-      return this.storage.favMovies.filter((el) => el.id==this.movie.id)[0].userRating
+        return this.storage.favMovies.filter((el) => el.id == this.movie.id)[0]
+          .userRating;
       else return 0;
-    },
-
-    addToFavorite() {
-      let flag = 0;
-      //проверяем есть ли уже фильм с таким id в базе и добавлен ли был в избранное
-      this.storage.favMovies.forEach((movie, index) => {
-        if (movie.id == this.movie.id) {
-          if (movie.liked != undefined) {
-            //если у фильма есть оценка, то только удаляем поле like
-            if (movie.userRating != undefined) {
-              delete movie.liked;
-              this.liked = 0;
-            }
-            //если нет оценки, то удаляем чтобы не засорять память
-            else {
-              this.storage.favMovies.splice(index, 1);
-              this.liked = 0;
-            }
-            //если была только оценка то добавляем в избранное
-          } else {
-            movie.liked = 1;
-            this.liked = 1;
-          }
-          flag = 1;
-        }
-      });
-      if (flag == 0) {
-        this.storage.favMovies.push(this.movie);
-        this.storage.favMovies[this.storage.favMovies.length - 1].liked = 1;
-        this.liked = 1;
-      }
-    },
-    numberWithSpaces(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    },
-    checkClicked() {
-      return this.show;
     },
   },
   watch: {
@@ -195,11 +127,11 @@ export default {
       let flag = 0;
       this.storage.favMovies.forEach((el) => {
         if (el.id == this.movie.id) {
-          el.userRating = this.rating;
+          if (this.rating != 0) el.userRating = this.rating;
           flag = 1;
         }
       });
-      if (flag == 0) {
+      if (flag == 0 && this.rating != 0) {
         this.storage.favMovies.push(this.movie);
         this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
           this.rating;
@@ -230,6 +162,10 @@ export default {
   background-color: rgb(231, 231, 204);
   transition: 0.15s;
 }
+.link {
+  text-decoration: none;
+  flex-grow: 2;
+}
 .img-info-wrapper {
   display: flex;
   cursor: pointer;
@@ -249,6 +185,7 @@ export default {
   padding-bottom: 5px;
 }
 .info__name {
+  color: black;
   font-size: 20px;
   font-weight: 600;
   padding-bottom: 12px;
@@ -258,80 +195,5 @@ export default {
   display: flex;
   flex-direction: row;
   gap: 20px;
-}
-.actions__rating {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.actions__rating__number {
-  font-weight: 800;
-  margin-right: 5px;
-  font-size: 19px;
-}
-.actions__rating__number_gold {
-  background: linear-gradient(165deg, #ffd25e 16.44%, #b59646 63.42%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.actions__rating__number_green {
-  color: rgb(8, 160, 8);
-}
-.actions__rating__number_red {
-  color: rgb(182, 17, 17);
-}
-.actions__rating-votes {
-  font-size: 12px;
-  color: grey;
-}
-.add__button {
-  background-color: rgb(209, 209, 177);
-  padding: 5px 12px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  transition: 0.2s;
-}
-.add__button:hover {
-  transform: scale(1.1);
-  transition: 0.2s;
-}
-.heart_red {
-  color: red;
-}
-.add__button:hover .heart {
-  color: red;
-  transition: 0.2s;
-}
-.heart {
-  transition: 0.2s;
-  font-size: 18px;
-  padding-right: 5px;
-}
-.actions__evaluate {
-  position: relative;
-}
-.v-rating {
-  position: absolute;
-  top: 32px;
-  left: -200px;
-}
-.star {
-  background-color: rgb(209, 209, 177);
-  padding: 5px;
-  border-radius: 17px;
-  transition: 0.2s;
-}
-.star_yellow {
-  color: rgb(255, 231, 92);
-}
-.actions__evaluate__button:hover {
-  transform: scale(1.1);
-  transition: 0.2s;
-}
-.actions__evaluate__button:hover .star {
-  color: rgb(255, 231, 92);
-  transition: 0.2s;
 }
 </style>
