@@ -1,6 +1,6 @@
 <template>
-  <div class="actions__add-to-favourite">
-    <button class="add__button" @click="addToFavorite">
+  <div>
+    <button class="button" @click="addToFavorite">
       <span class="material-icons heart" :class="[{ heart_red: liked }]">
         favorite</span>
       В избранное
@@ -21,7 +21,7 @@ export default {
   props: {
     liked: {
       type: [Boolean, Number],
-      default:0
+      default: 0,
     },
     movie: {
       type: Object,
@@ -64,7 +64,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add__button {
+.button {
   background-color: rgb(209, 209, 177);
   padding: 5px 12px;
   border-radius: 18px;
@@ -72,14 +72,14 @@ export default {
   align-items: center;
   transition: 0.2s;
 }
-.add__button:hover {
+.button:hover {
   transform: scale(1.1);
   transition: 0.2s;
 }
 .heart_red {
   color: red;
 }
-.add__button:hover .heart {
+.button:hover .heart {
   color: red;
   transition: 0.2s;
 }

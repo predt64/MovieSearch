@@ -4,7 +4,7 @@
     :model-value="modelValue"
     @update:model-value="changeOption"
     :items="options"
-    class="select"
+    class="select-component"
     bg-color="rgb(231, 231, 204)"
   >
   </v-select>
@@ -33,7 +33,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.select {
+.select-component {
   width: 240px;
 }
 </style>

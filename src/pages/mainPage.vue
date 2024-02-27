@@ -3,8 +3,8 @@
 
   <header class="header">
     <my-search v-model="movieCurrent" @search="search">
-      <p class="search__title_main">Fast. Convinient. Reliable.</p>
-      <p class="search__title_subtitle">
+      <p class="header__title">Fast. Convinient. Reliable.</p>
+      <p class="header__subtitle">
         Unlock the magic of movies with our ultimate Movie Searcher!
       </p>
     </my-search>
@@ -12,7 +12,7 @@
 
   <main class="main">
     <div
-      class="pages-select__wrapper"
+      class="pages-and-select__wrapper"
       v-if="!storage.loader && storage.movies.length > 0"
     >
       <movie-pages color="white" :request="movieCurrent" />
@@ -22,7 +22,7 @@
         class="select"
       />
     </div>
-    <my-loader v-if="storage.loader" class="loader" />
+    <my-loader v-if="storage.loader" class="loader"/>
     <movie-item
       v-else-if="storage.movies.length > 0"
       v-for="movie in storage.movies"
@@ -118,11 +118,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search__title_main {
+.header__title {
   font-size: 50px;
   font-weight: 800;
 }
-.search__title_subtitle {
+.header__subtitle {
   font-size: 30px;
 }
 .v-card {
@@ -153,7 +153,7 @@ export default {
 .loader {
   height: 371px;
 }
-.pages-select__wrapper {
+.pages-and-select__wrapper {
   position: relative;
   display: flex;
   max-width: 1080px;

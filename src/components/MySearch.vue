@@ -1,14 +1,17 @@
 <template>
   <div class="search">
-    <div class="search__title">
-    
-        <slot></slot>  
-      
+    <div class="title">
+      <slot></slot>
     </div>
     <!-- вэлью и модел вэлью объеденить? -->
     <div class="search__input">
-      
-      <my-input v-if="!disableSearch" :model-value="modelValue" @input="updateInput" @search="search" :value="modelValue"/>
+      <my-input
+        v-if="!disableSearch"
+        :model-value="modelValue"
+        @input="updateInput"
+        @search="search"
+        :value="modelValue"
+      />
     </div>
   </div>
 </template>
@@ -18,10 +21,10 @@ export default {
   emits: ["updateInput", "search", "update:modelValue"],
   props: {
     modelValue: [String, Number],
-    disableSearch:{
-      type:Number,
-      default:0
-    }
+    disableSearch: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
     search() {
@@ -35,7 +38,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search{
+.search {
   background-image: linear-gradient(
       to top,
       rgba(0, 0, 0, 0.8) 0,
@@ -54,7 +57,7 @@ export default {
   text-align: center;
   margin-top: 80px;
 }
-.search__title {
+.title {
   text-align: center;
   color: white;
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="navbar__wrapper">
-    <div class="wrapper">
+  <div class="navbar__upper-wrapper">
+    <div class="navbar__wrapper">
       <div class="navbar">
         <router-link
           to="/"
@@ -8,7 +8,7 @@
           @click="refresh"
         >
           <img
-            class="navbar__title-logo__image"
+            class="logo"
             src="@/img/navbar.png"
             alt="logo"
           />
@@ -18,7 +18,7 @@
           <router-link
             to="/"
             :class="{
-              navbar__references__item: true,
+              references__item: true,
               active: main,
             }"
             @click="refresh"
@@ -27,7 +27,7 @@
           <router-link
             to="/favourite"
             :class="{
-              navbar__references__item: true,
+              references__item: true,
               active: fav,
             }"
             >Закладки</router-link
@@ -69,10 +69,10 @@ export default {
 .active {
   color: black !important;
 }
-.navbar__wrapper {
+.navbar__upper-wrapper {
   background: linear-gradient(to right, rgb(231, 68, 18), rgb(255, 98, 78));
 }
-.wrapper {
+.navbar__wrapper {
   max-width: 1080px;
   margin: 0 auto;
 }
@@ -90,7 +90,7 @@ export default {
   color: black;
   text-decoration: none;
 }
-.navbar__title-logo__image {
+.logo {
   max-width: 50px;
 }
 .navbar__references {
@@ -98,17 +98,17 @@ export default {
   align-items: center;
   font-size: 17px;
 }
-.navbar__references__item {
+.references__item {
   text-decoration: none;
   color: white;
   font-weight: bold;
   transition: 0.15s;
 }
-.navbar__references__item:hover {
+.references__item:hover {
   transition: 0.2s;
   color: black;
 }
-.navbar__references__item:last-child {
+.references__item:last-child {
   margin-left: 40px;
 }
 </style>

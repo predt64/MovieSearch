@@ -11,7 +11,4 @@ export default{
 .v-application__wrap{
   background-color: #ffffff
 }
-body{
-  background-color: #000;
-}
 </style>

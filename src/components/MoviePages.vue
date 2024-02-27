@@ -4,7 +4,7 @@
       v-model="this.storage.currentPage"
       :length="this.storage.totalPages"
       :total-visible="6"
-      :color=color
+      :color="color"
     ></v-pagination>
   </div>
 </template>
@@ -12,11 +12,11 @@
 <script>
 import { useStorage } from "@/store/app.js";
 export default {
-  props:{
-    color:{
-      type:String,
-      required:true
-    }
+  props: {
+    color: {
+      type: String,
+      required: true,
+    },
   },
   setup() {
     const storage = useStorage();
@@ -26,8 +26,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pages__wrapper{
-  white-space:nowrap;
+.pages__wrapper {
+  white-space: nowrap;
 }
-
 </style>

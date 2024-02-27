@@ -2,17 +2,10 @@
   <div class="upper-wrapper">
     <div class="wrapper" @click="show = false">
       <router-link :to="'/movie/' + movie.id" class="link">
-        <div class="img-info-wrapper">
+        <div class="poster-and-info">
           <div class="poster">
             <img
-              v-if="this.movie.poster.previewUrl !== null"
               :src="this.movie.poster.previewUrl"
-              alt="logo"
-              class="poster__image"
-            />
-            <img
-              v-else
-              src="https://res.cloudinary.com/shop-consoles-ru/image/upload/c_scale,w_1000/v1568607967/images/no_image_avalible_jwqnxa.jpg"
               alt="logo"
               class="poster__image"
             />
@@ -22,7 +15,7 @@
             <p class="info__name">
               {{ this.movie.name }}
             </p>
-            <div class="info__subtitle__wrapper">
+            <div class="info__subtitle-wrapper">
               <p class="info__subtitle">
                 <span v-if="this.movie.alternativeName">
                   {{ this.movie.alternativeName }},
@@ -42,17 +35,13 @@
               </p>
 
               <p class="info__sub-subtitle">
-                <span
-                  class="info__sub-subtitlle__country"
-                  v-if="movie.countries.length > 0"
+                <span v-if="movie.countries.length > 0"
                   >{{ movie.countries[0].name }} •
                 </span>
                 <span v-else> — </span>
-                <span
-                  class="info__sub-subtitlle__genre"
-                  v-if="movie.genres.length > 0"
-                  >{{ movie.genres[0].name }}</span
-                >
+                <span v-if="movie.genres.length > 0">{{
+                  movie.genres[0].name
+                }}</span>
                 <span v-else> — </span>
               </p>
             </div>
@@ -60,8 +49,7 @@
         </div>
       </router-link>
       <div class="actions">
-        
-        <rating-number :movie="movie"/>
+        <rating-number :movie="movie" />
 
         <button-favourite
           @liked="liked = 1"
@@ -166,7 +154,7 @@ export default {
   text-decoration: none;
   flex-grow: 2;
 }
-.img-info-wrapper {
+.poster-and-info {
   display: flex;
   cursor: pointer;
 }
@@ -176,8 +164,9 @@ export default {
 .info {
   padding-top: 6px;
   padding-left: 10px;
+  max-width: 550px;
 }
-.info__subtitle__wrapper {
+.info__subtitle-wrapper {
   color: rgb(69, 67, 67);
   font-weight: 300;
 }

@@ -3,20 +3,20 @@
 
   <header class="header">
     <my-search :disableSearch="1">
-      <p class="search__title">Your favorite</p>
+      <p class="title">Your favorite</p>
     </my-search>
   </header>
 
   <main class="main">
     <div
-      class="movie-list__wrapper"
+      class="movie-list"
       v-if="Object.keys(storage.favMovies).length > 0"
     >
-      <div class="pages-select__wrapper">
+      <div class="select">
         <my-select
           v-model="selectedSort"
           :options="selectOptions"
-          class="select"
+          class="select__item"
         />
       </div>
       <movie-item
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search__title {
+.title {
   font-size: 80px;
   font-weight: bold;
 }
@@ -106,7 +106,7 @@ export default {
   font-size: 60px;
   text-align: center;
 }
-.pages-select__wrapper {
+.select {
   position: relative;
   display: flex;
   max-width: 1080px;
@@ -114,7 +114,7 @@ export default {
   justify-content: center;
   justify-content: flex-end;
 }
-.select {
+.select__item {
   max-width: 240px;
   max-height: 58px;
 }

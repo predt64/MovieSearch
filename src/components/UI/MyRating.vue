@@ -2,41 +2,40 @@
   <!-- почему то меня в ступор ввело, почему тут надо функцию со скобочками передавать, 
    мне всегда казалось что если функция без аргументов, то можно и без них, а тут
    результат другой. не до конца эту тему похоже понял  -->
-  <div class="actions__evaluate" v-if="modelValue == 0">
+  <div class="evaluation" v-if="modelValue == 0">
     <button
-      class="actions__evaluate__button"
+      class="button"
       @click.stop="changeShow"
       title="Поставить оценку"
     >
       <span
-        class="material-icons icon star"
-        :class="[{ star_yellow: modelValue }]"
+        class="material-icons icon icon--star"
         >star</span
       >
     </button>
-    <div class="actions__evaluate__bar_box">
+    <div class="stars">
       <v-rating
         v-if="show == 1"
         :model-value="modelValue"
         @update:model-value="updateRating"
         @click.stop
-        class="actions__evaluate__bar"
+        class="stars__items"
         active-color="darkred"
         half-increments
         hover
       ></v-rating>
     </div>
   </div>
-  <div class="actions__cancel-evaluation" v-else>
+  <div class="cancel-evaluation" v-else>
     <button
-      class="actions__evaluate__button"
+      class="button"
       title="Удалить поставленную оценку"
       @click="deleteRating"
     >
-      <div class="actions__evaluate__button__rating icon">
+      <div class="cancel-evaluation__rating icon">
         {{ modelValue * 2 }}
       </div>
-      <span class="cross material-icons icon">close</span>
+      <span class="icon--cross material-icons icon">close</span>
     </button>
   </div>
 </template>
@@ -89,10 +88,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.actions__evaluate {
+.evaluation {
   position: relative;
 }
-.v-rating {
+.stars__items{
   position: absolute;
   top: 32px;
   left: -200px;
@@ -104,40 +103,37 @@ export default {
   transition: 0.2s;
 }
 
-.cross::before {
+.icon--cross::before {
   transition: 0.2s;
 }
-.cross:hover::before {
+.icon--cross:hover::before {
   transition: 0.2s;
 }
-.cross:hover {
+.icon--cross:hover {
   color: red;
   transition: 0.2s;
 }
-.star_yellow {
-  color: rgb(255, 231, 92);
-}
-.actions__evaluate__button__rating {
+.cancel-evaluation__rating {
   width: 34px;
   height: 34px;
   color: #19b467;
   font-weight: 700;
 }
-.actions__evaluate__button:hover {
+.button:hover {
   transform: scale(1.1);
   transition: 0.2s;
 }
-.actions__evaluate__button:hover .star {
+.button:hover .icon--star {
   color: rgb(255, 231, 92);
   transition: 0.2s;
 }
-.cross {
+.icon--cross {
   display: none;
 }
-.actions__evaluate__button:hover .actions__evaluate__button__rating {
+.button:hover .cancel-evaluation__rating {
   display: none;
 }
-.actions__evaluate__button:hover .cross {
+.button:hover .icon--cross {
   display: block;
 }
 </style>
