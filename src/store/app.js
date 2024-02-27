@@ -15,7 +15,6 @@ const engLetters = /[a-zA-Z]/;
 export const useStorage = defineStore("storage", () => {
   const loader = ref(false);
   const totalPages = ref(0);
-  const currentPage = ref(1);
   const movieSearch = ref("");
   const movies = ref([]);
   const similarMovies = ref([]);
@@ -27,19 +26,18 @@ export const useStorage = defineStore("storage", () => {
     favMovies.value = JSON.parse(favMoviesInLocalStorage)._value;
   }
 
-  const getMovies = async (search, sortType = "") => {
+  const getMovies = async (search,currentPage=1, sortType = "") => {
     loader.value = true;
     let res;
     //если введено английское слово, ищем по соответсвующему ключу
     if (engLetters.test(search))
       res = await fetch(
-        `${url}${currentPage.value}&alternativeName_like=${search}&_sort=${sortType}&_order=desc`
+        `${url}${currentPage}&alternativeName_like=${search}&_sort=${sortType}&_order=desc`
       )
     else
       res = await fetch(
-        `${url}${currentPage.value}&name_like=${search}&_sort=${sortType}&_order=desc`
+        `${url}${currentPage}&name_like=${search}&_sort=${sortType}&_order=desc`
       )
-      console.log(sortType)
 
     const data = await res.json();
 
@@ -101,7 +99,6 @@ export const useStorage = defineStore("storage", () => {
   return {
     loader,
     totalPages,
-    currentPage,
     movieSearch,
     movies,
     similarMovies,

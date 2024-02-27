@@ -1,5 +1,5 @@
 <template>
-  <my-navbar @refresh="refresh" :main="1" />
+  <my-navbar :main="1" />
 
   <header class="header">
     <my-search v-model="movieCurrent" @search="search">
@@ -15,14 +15,14 @@
       class="pages-and-select__wrapper"
       v-if="!storage.loader && storage.movies.length > 0"
     >
-      <movie-pages color="white" :request="movieCurrent" />
+      <movie-pages color="white" v-model="currentPage" />
       <my-select
         v-model="selectedSort"
         :options="selectOptions"
         class="select"
       />
     </div>
-    <my-loader v-if="storage.loader" class="loader"/>
+    <my-loader v-if="storage.loader" class="loader" />
     <movie-item
       v-else-if="storage.movies.length > 0"
       v-for="movie in storage.movies"
@@ -48,8 +48,6 @@ import MovieItem from "@/components/MovieItem.vue";
 import MySearch from "@/components/MySearch.vue";
 import MyNavbar from "@/components/MyNavbar";
 import { useStorage } from "@/store/app.js";
-import { mapActions } from "pinia";
-import { ref } from "vue";
 
 export default {
   setup() {
@@ -64,55 +62,61 @@ export default {
   },
   data() {
     return {
-      movieCurrent: ref(""),
+      movieCurrent: "", //ref("")????
       //сделать чтобы было = 1
       currentPage: 1,
       selectedSort: "По умолчанию",
       sortValue: "",
       selectOptions: ["По рейтингу", "По дате выхода", "По хронометражу"],
+      currentlyRefreshing: 0,
     };
   },
   methods: {
-    ...mapActions(useStorage, ["$subscribe"]),
     search() {
       this.selectedSort = "По умолчанию";
-      this.storage.currentPage = 1;
       this.currentPage = 1;
       this.storage.getMovies(this.movieCurrent);
     },
-    addToFavorite() {
-      //добавить в локалсторэдж id
-    },
-    refresh() {
-      this.storage.currentPage = 1;
-      this.currentPage = 1;
-      this.movieCurrent = "";
-      this.selectedSort = "По умолчанию";
-      this.storage.getMovies(this.movieCurrent);
-    },
+
+    //изначальная функция для 'обновления' страницы при нажатии на лого или 'главная',
+    //currentlyRefreshing использовался чтобы не триггерить watch и не вызывать
+    //getMovies() несколько раз, но затем я наешел функцию location.reload()
+    //и заменил данный фрагмент кода.
+
+    // refresh() {
+    //   this.currentlyRefreshing = 1;
+    //   this.currentPage = 1;
+    //   this.movieCurrent = "";
+    //   this.selectedSort = "По умолчанию";
+    //   this.storage.getMovies("");
+    // },
   },
   watch: {
     selectedSort() {
-      if (this.selectedSort != "По умолчанию") {
-        this.storage.currentPage = 1;
-        this.currentPage = 1;
-        if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
-        else if (this.selectedSort == "По хронометражу")
-          this.sortValue = "movieLength";
-        else this.sortValue = "year";
-        this.storage.getMovies(this.movieCurrent, this.sortValue);
+      if (this.currentlyRefreshing == 1) this.currentlyRefreshing = 0;
+      else {
+        if (this.selectedSort != "По умолчанию") {
+          this.currentPage = 1;
+          if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
+          else if (this.selectedSort == "По хронометражу")
+            this.sortValue = "movieLength";
+          else this.sortValue = "year";
+          this.storage.getMovies(this.movieCurrent, 1, this.sortValue);
+        }
+      }
+    },
+    currentPage() {
+      if (this.currentlyRefreshing == 0) {
+        this.storage.getMovies(
+          this.movieCurrent,
+          this.currentPage,
+          this.sortValue
+        );
       }
     },
   },
   mounted() {
     this.storage.getMovies("");
-
-    this.$subscribe((mutation, state) => {
-      if (state.currentPage != this.currentPage) {
-        this.storage.getMovies(this.movieCurrent, this.sortValue);
-        this.currentPage = state.currentPage;
-      }
-    });
   },
 };
 </script>

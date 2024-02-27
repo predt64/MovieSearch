@@ -1,20 +1,16 @@
 <template>
   <div class="navbar__upper-wrapper">
     <div class="navbar__wrapper">
+
       <div class="navbar">
-        <router-link
-          to="/"
-          class="navbar__title"
-          @click="refresh"
-        >
-          <img
-            class="logo"
-            src="@/img/navbar.png"
-            alt="logo"
-          />
+
+        <router-link to="/" class="navbar__title" @click="refresh">
+          <img class="logo" src="@/img/navbar.png" alt="logo" />
           <div class="navbar__title-main"><strong>Movie</strong>Search</div>
         </router-link>
+
         <div class="navbar__references">
+          
           <router-link
             to="/"
             :class="{
@@ -24,6 +20,7 @@
             @click="refresh"
             >Главная</router-link
           >
+
           <router-link
             to="/favourite"
             :class="{
@@ -32,8 +29,10 @@
             }"
             >Закладки</router-link
           >
+
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -42,24 +41,23 @@
 import { useStorage } from "@/store/app.js";
 
 export default {
-  emits:['refresh'],
-  props:{
-    fav:{
-      type:Number,
-      default:0
+  props: {
+    fav: {
+      type: Number,
+      default: 0,
     },
-    main:{
-      type:Number,
-      default:0
-    }
+    main: {
+      type: Number,
+      default: 0,
+    },
   },
   setup() {
     const storage = useStorage();
     return { storage };
   },
   methods: {
-    refresh(){
-      this.$emit('refresh');
+    refresh() {
+      location.reload();
     },
   },
 };

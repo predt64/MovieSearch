@@ -1,5 +1,5 @@
 <template>
-  <my-navbar :fav="1" @refresh="refresh"/>
+  <my-navbar :fav="1"/>
 
   <header class="header">
     <my-search :disableSearch="1">
@@ -55,9 +55,6 @@ export default {
     };
   },
   methods:{
-    refresh() {
-      this.storage.currentPage = 1;
-    },
   },
   watch: {
     // переиспользовать бизнес-логику сортировки с главной страницы, к сожалению,
