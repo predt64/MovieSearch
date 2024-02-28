@@ -49,7 +49,7 @@
         </div>
       </router-link>
       <div class="actions">
-        <rating-number :movie="movie" />
+        <rating-number :rating="movie.rating.kp" :votes="movie.votes.kp" />
 
         <button-favourite
           @liked="liked = 1"

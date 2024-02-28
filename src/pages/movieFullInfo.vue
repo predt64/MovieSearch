@@ -7,14 +7,14 @@
       либо картинки много весят, либо я что-то не так сделала -->
       <div class="movie__poster">
         <img
-          :src="this.storage.movieInfo.poster.previewUrl"
+          :src="movie.poster.previewUrl"
           alt="logo"
           class="movie__poster-img"
         />
         <p class="description">
           Описание:
           <span class="description__main">{{
-            this.storage.movieInfo.description
+            movie.description
           }}</span>
         </p>
       </div>
@@ -22,12 +22,12 @@
       <div class="info">
         <div class="info__main">
           <p class="info__main-name">
-            {{ this.storage.movieInfo.name }}
-            <span> ({{ this.storage.movieInfo.year }}) </span>
+            {{ movie.name }}
+            <span> ({{ movie.year }}) </span>
           </p>
           <p class="info__main-engname">
-            {{ this.storage.movieInfo.alternativeName }}
-            <span> {{ this.storage.movieInfo.ageRating }}+ </span>
+            {{ movie.alternativeName }}
+            <span> {{ movie.ageRating }}+ </span>
           </p>
           <button-favourite
             class="info__button"
@@ -51,14 +51,14 @@
           </div>
           <div class="info__side-box">
             <p class="movie__side-answer">
-              {{ this.storage.movieInfo.year }}
+              {{ movie.year }}
             </p>
             <p class="movie__side-answer">
-              {{ this.storage.movieInfo.countries[0].name }}
+              {{ movie.countries[0].name }}
             </p>
             <p class="movie__side-answer">
               <span
-                v-for="(genre, index) in this.storage.movieInfo.genres"
+                v-for="(genre, index) in movie.genres"
                 :key="genre"
               >
                 <span v-if="index < 3" class="genre">
@@ -67,10 +67,10 @@
               </span>
             </p>
             <p class="movie__side-answer">
-              {{ this.storage.movieInfo.movieLength }} мин.
+              {{ movie.movieLength }} мин.
             </p>
             <p class="movie__side-answer">
-              {{ this.storage.movieInfo.rating.imdb }}
+              {{ movie.rating.imdb }}
             </p>
           </div>
         </div>
@@ -78,12 +78,15 @@
 
       <div class="rating-and-similar">
         <div class="rating">
-          <rating-number :movie="this.storage.movieInfo" />
+          <rating-number
+            :rating="movie.rating.kp"
+            :votes="movie.votes.kp"
+          />
           <my-rating
             v-model="rating"
             :show="show"
             @changeShow="this.show = !this.show"
-            :id="this.storage.movieInfo.id"
+            :id="movie.id"
             class="rating__item"
           />
         </div>
@@ -91,16 +94,21 @@
           <p class="similar__title">Схожее:</p>
           <div
             class="similar__item"
-            v-for="movie in storage.similarMovies"
-            :key="movie.id"
+            v-for="similarMovie in storage.similarMovies"
+            :key="similarMovie.id"
           >
-            <div class="link" @click="id = movie.id">
+            <!-- но в поисковой строке остается id изначального фильма. а если использовать router-link,
+          то id с этой страницы динамически не подхватывает изменившийся в поисквовй строке id 
+          и следовательно страница не перерендеревается, разные варианты попробовал, 
+          типа watch $route.params.id, или изменение id в поисковой строке, а затем обновление 
+          старницы через location.reload(). но ничего особо не вышло. Наверное есть какое-то умное решение -->
+            <div @click="nextMovie(similarMovie.id)" class="link">
               <img
-                :src="movie.poster.previewUrl"
+                :src="similarMovie.poster.previewUrl"
                 alt="Poster"
                 class="similar__poster"
               />
-              <p class="similar__name">{{ movie.name }}</p>
+              <p class="similar__name">{{ similarMovie.name }}</p>
             </div>
           </div>
         </div>
@@ -127,13 +135,18 @@ export default {
       liked: -1,
       show: false,
       rating: -1,
+      movie: {},
     };
   },
   methods: {
+    nextMovie(id) {
+      this.$router.push({ name: "movie", params: { id: `${id}` } });
+      this.id = id;
+    },
     getRating() {
       let flag = 0;
       this.storage.favMovies.forEach((el) => {
-        if (el.id == this.storage.movieInfo.id && el.userRating != undefined) {
+        if (el.id == this.movie.id && el.userRating != undefined) {
           this.rating = el.userRating;
           flag = 1;
         }
@@ -143,7 +156,7 @@ export default {
     getLiked() {
       let flag = 0;
       this.storage.favMovies.forEach((el) => {
-        if (el.id == this.storage.movieInfo.id && el.liked != undefined) {
+        if (el.id == this.movie.id && el.liked != undefined) {
           this.liked = el.liked;
           flag = 1;
         }
@@ -155,25 +168,27 @@ export default {
     rating() {
       let flag = 0;
       this.storage.favMovies.forEach((el) => {
-        if (el.id == this.storage.movieInfo.id) {
+        if (el.id == this.movie.id) {
           if (this.rating != 0) el.userRating = this.rating;
           flag = 1;
         }
       });
       if (flag == 0 && this.rating != 0) {
-        this.storage.favMovies.push(this.storage.movieInfo);
+        this.storage.favMovies.push(this.movie);
         this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
           this.rating;
       }
     },
     async id() {
       await this.storage.getSimilarMovies(this.id);
+      this.movie = this.storage.movieInfo;
       this.getLiked();
       this.getRating();
     },
   },
   async created() {
     await this.storage.getSimilarMovies(this.id);
+    this.movie = this.storage.movieInfo;
     this.getLiked();
     this.getRating();
   },
@@ -198,6 +213,7 @@ export default {
 }
 .movie__poster-img {
   max-width: 250px;
+  border: 6px inset black;
 }
 .info {
   flex-grow: 4;
@@ -271,6 +287,7 @@ export default {
 }
 .similar__poster {
   max-width: 100px;
+  border: 3px inset black;
 }
 .similar__name {
   max-width: 250px;

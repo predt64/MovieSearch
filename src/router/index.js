@@ -14,6 +14,7 @@ const routes = [
   {
     path: "/movie/:id",
     component: () => import("@/pages/movieFullInfo.vue"),
+    name:'movie'
   },
 ];
 

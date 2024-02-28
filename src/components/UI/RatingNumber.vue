@@ -3,18 +3,18 @@
     <span
       :class="{
         rating__number: true,
-        rating__number_gold: movie.rating.kp.toFixed(1) >= 8,
+        rating__number_gold: rating.toFixed(1) >= 8,
         rating__number_green:
-          movie.rating.kp.toFixed(1) >= 7 && movie.rating.kp.toFixed(1) < 8,
-        rating__number_red: movie.rating.kp.toFixed(1) < 6,
+        rating.toFixed(1) >= 7 && rating.toFixed(1) < 8,
+        rating__number_red: rating.toFixed(1) < 6,
       }"
-      v-if="movie.rating.kp > 0"
-      >{{ movie.rating.kp.toFixed(1) }}</span
+      v-if="rating > 0"
+      >{{ rating.toFixed(1) }}</span
     >
     <span v-else> — </span>
 
-    <span class="raing__votes" v-if="movie.votes.kp > 0">{{
-      numberWithSpaces(movie.votes.kp)
+    <span class="raing__votes" v-if="votes> 0">{{
+      numberWithSpaces(votes)
     }}</span>
     <span v-else> — </span>
   </div>
@@ -24,8 +24,12 @@
 export default {
   name: "rating-number",
   props: {
-    movie: {
-      type: Object,
+    rating: {
+      type: Number,
+      requred: true,
+    },
+    votes: {
+      type: Number,
       requred: true,
     },
   },

@@ -15,7 +15,6 @@ const engLetters = /[a-zA-Z]/;
 export const useStorage = defineStore("storage", () => {
   const loader = ref(false);
   const totalPages = ref(0);
-  const movieSearch = ref("");
   const movies = ref([]);
   const similarMovies = ref([]);
   const movieInfo = ref({});
@@ -41,10 +40,10 @@ export const useStorage = defineStore("storage", () => {
 
     const data = await res.json();
 
-    //подсчет количества страниц. не уверен, что это нужно делать именно тут, но вроде удобно
+    //подсчет количества страниц. не уверен, что это нужно делать именно тут, но вроде удобно?
+    //могу перенести в компоненты и передавать аргументом
     totalPages.value = Math.ceil(res.headers.get("x-total-count") / 25);
     movies.value = data;
-    movieSearch.value = search;
     loader.value = false;
   };
 
@@ -99,7 +98,6 @@ export const useStorage = defineStore("storage", () => {
   return {
     loader,
     totalPages,
-    movieSearch,
     movies,
     similarMovies,
     movieInfo,

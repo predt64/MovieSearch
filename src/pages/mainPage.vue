@@ -11,10 +11,11 @@
   </header>
 
   <main class="main">
-    <div
+
+    <div 
       class="pages-and-select__wrapper"
       v-if="!storage.loader && storage.movies.length > 0"
-    >
+      >
       <movie-pages color="white" v-model="currentPage" />
       <my-select
         v-model="selectedSort"
@@ -22,6 +23,7 @@
         class="select"
       />
     </div>
+
     <my-loader v-if="storage.loader" class="loader" />
     <movie-item
       v-else-if="storage.movies.length > 0"
@@ -62,13 +64,11 @@ export default {
   },
   data() {
     return {
-      movieCurrent: "", //ref("")????
-      //сделать чтобы было = 1
+      movieCurrent: "",
       currentPage: 1,
       selectedSort: "По умолчанию",
       sortValue: "",
       selectOptions: ["По рейтингу", "По дате выхода", "По хронометражу"],
-      currentlyRefreshing: 0,
     };
   },
   methods: {
@@ -93,8 +93,6 @@ export default {
   },
   watch: {
     selectedSort() {
-      if (this.currentlyRefreshing == 1) this.currentlyRefreshing = 0;
-      else {
         if (this.selectedSort != "По умолчанию") {
           this.currentPage = 1;
           if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
@@ -103,16 +101,13 @@ export default {
           else this.sortValue = "year";
           this.storage.getMovies(this.movieCurrent, 1, this.sortValue);
         }
-      }
     },
     currentPage() {
-      if (this.currentlyRefreshing == 0) {
         this.storage.getMovies(
           this.movieCurrent,
           this.currentPage,
           this.sortValue
         );
-      }
     },
   },
   mounted() {

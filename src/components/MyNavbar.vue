@@ -1,23 +1,20 @@
 <template>
   <div class="navbar__upper-wrapper">
     <div class="navbar__wrapper">
-
       <div class="navbar">
-
-        <router-link to="/" class="navbar__title" @click="refresh">
+        <router-link to="/" class="navbar__title" @click="refresh('/')">
           <img class="logo" src="@/img/navbar.png" alt="logo" />
           <div class="navbar__title-main"><strong>Movie</strong>Search</div>
         </router-link>
 
         <div class="navbar__references">
-          
           <router-link
             to="/"
             :class="{
               references__item: true,
               active: main,
             }"
-            @click="refresh"
+            @click="refresh('/')"
             >Главная</router-link
           >
 
@@ -27,12 +24,11 @@
               references__item: true,
               active: fav,
             }"
+            @click="refresh('/favourite')"
             >Закладки</router-link
           >
-
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -53,11 +49,11 @@ export default {
   },
   setup() {
     const storage = useStorage();
-    return { storage };
+    return { storage};
   },
   methods: {
-    refresh() {
-      location.reload();
+    refresh(currentPath) {
+      if (currentPath == this.$route.path) location.reload();
     },
   },
 };
