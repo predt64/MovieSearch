@@ -3,7 +3,6 @@
     <div class="title">
       <slot></slot>
     </div>
-    <!-- вэлью и модел вэлью объеденить? -->
     <div class="search__input">
       <my-input
         v-if="!disableSearch"
@@ -21,6 +20,7 @@ export default {
   emits: ["updateInput", "search", "update:modelValue"],
   props: {
     modelValue: [String, Number],
+  //скрывает панель поиска, если находится на странице с избранным т.к. там нет такой функции
     disableSearch: {
       type: Number,
       default: 0,

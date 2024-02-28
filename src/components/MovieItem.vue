@@ -1,35 +1,37 @@
+<!-- компонент с данными о фильме -->
 <template>
   <div class="upper-wrapper">
+    <!-- при нажатии в любую часть компонента скроетя панель оценки фильма (звездочки) -->
     <div class="wrapper" @click="show = false">
+      <!-- при нажатии на данный блок происходит перенос на страницу фильма с более
+           полной информацией -->
       <router-link :to="'/movie/' + movie.id" class="link">
         <div class="poster-and-info">
           <div class="poster">
             <img
-              :src="this.movie.poster.previewUrl"
+              :src="movie.poster.previewUrl"
               alt="logo"
               class="poster__image"
             />
           </div>
-
+          <!-- информация о фильме, если какого то параметра нет то он заменяется прочерком -->
           <div class="info">
             <p class="info__name">
-              {{ this.movie.name }}
+              {{ movie.name }}
             </p>
             <div class="info__subtitle-wrapper">
               <p class="info__subtitle">
-                <span v-if="this.movie.alternativeName">
-                  {{ this.movie.alternativeName }},
+                <span v-if="movie.alternativeName">
+                  {{ movie.alternativeName }},
                 </span>
-                <span v-else-if="this.movie.enName">
-                  {{ this.movie.enName }},
-                </span>
+                <span v-else-if="movie.enName"> {{ movie.enName }}, </span>
                 <span v-else> —, </span>
 
-                <span v-if="this.movie.year"> {{ this.movie.year }}, </span>
+                <span v-if="movie.year"> {{ movie.year }}, </span>
                 <span v-else> —, </span>
 
                 <span v-if="movie.movieLength">
-                  {{ this.movie.movieLength }} мин.
+                  {{ movie.movieLength }} мин.
                 </span>
                 <span v-else> — </span>
               </p>
@@ -57,12 +59,13 @@
           :liked="liked"
           :movie="movie"
         />
-
+        <!-- привязваем текущий статус отображения звезд для оценивания фильма и
+             подписываемся на событие, если их сокрытия из самого компонента -->
         <my-rating
           v-model="rating"
           :show="show"
-          @changeShow="this.show = !this.show"
-          :id="movie.id"
+          @changeShow="show = !show"
+          :movie="movie"
         />
       </div>
     </div>
@@ -99,6 +102,7 @@ export default {
         (el) => el.id == this.movie.id && el.liked == 1
       );
     },
+    //то же что и в checkLiked только для рейтинга
     checkRating() {
       if (
         this.storage.favMovies.some(
@@ -110,22 +114,7 @@ export default {
       else return 0;
     },
   },
-  watch: {
-    rating() {
-      let flag = 0;
-      this.storage.favMovies.forEach((el) => {
-        if (el.id == this.movie.id) {
-          if (this.rating != 0) el.userRating = this.rating;
-          flag = 1;
-        }
-      });
-      if (flag == 0 && this.rating != 0) {
-        this.storage.favMovies.push(this.movie);
-        this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
-          this.rating;
-      }
-    },
-  },
+  
 };
 </script>
 

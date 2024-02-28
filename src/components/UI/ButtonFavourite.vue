@@ -1,3 +1,4 @@
+<!-- кнопка добавления в избранное -->
 <template>
   <div>
     <button class="button" @click="addToFavorite">
@@ -32,12 +33,13 @@ export default {
     addToFavorite() {
       let flag = 0;
       //проверяем есть ли уже фильм с таким id в базе и добавлен ли был в избранное
-      this.storage.favMovies.forEach((movie, index) => {
-        if (movie.id == this.movie.id) {
-          if (movie.liked != undefined) {
+      this.storage.favMovies.forEach((movieCurrent, index) => {
+        if (movieCurrent.id == this.movie.id) {
+          //если был лайк, то
+          if (movieCurrent.liked == 1) {
             //если у фильма есть оценка, то только удаляем поле like
-            if (movie.userRating != undefined) {
-              delete movie.liked;
+            if (movieCurrent.userRating != undefined) {
+              delete movieCurrent.liked;
               this.$emit("disliked");
             }
             //если нет оценки, то удаляем чтобы не засорять память
@@ -45,14 +47,15 @@ export default {
               this.storage.favMovies.splice(index, 1);
               this.$emit("disliked");
             }
-            //если была только оценка то добавляем в избранное
+            //если была только оценка, а лайка не было, то добавляем в избранное
           } else {
-            movie.liked = 1;
+            movieCurrent.liked = 1;
             this.$emit("liked");
           }
           flag = 1;
         }
       });
+      //если в 'БД' не было фильма с таким id
       if (flag == 0) {
         this.storage.favMovies.push(this.movie);
         this.storage.favMovies[this.storage.favMovies.length - 1].liked = 1;

@@ -1,31 +1,24 @@
+<!-- отображение и выбор рейтинга -->
 <template>
-  <!-- почему то меня в ступор ввело, почему тут надо функцию со скобочками передавать, 
-   мне всегда казалось что если функция без аргументов, то можно и без них, а тут
-   результат другой. не до конца эту тему похоже понял  -->
   <div class="evaluation" v-if="modelValue == 0">
-    <button
-      class="button"
-      @click.stop="changeShow"
-      title="Поставить оценку"
-    >
-      <span
-        class="material-icons icon icon--star"
-        >star</span
-      >
+    <!-- .stop чтобы прекратить всплытие события в компоненте MovieItem show=0,
+    т.к. без этого панелька со звездочками не откроется -->
+    <button class="button" @click.stop="changeShow" title="Поставить оценку">
+      <!-- иконка звезды -->
+      <span class="material-icons icon icon--star">star</span>
     </button>
     <div class="stars">
       <v-rating
         v-if="show == 1"
         :model-value="modelValue"
         @update:model-value="updateRating"
-        @click.stop
         class="stars__items"
-        active-color="darkred"
         half-increments
         hover
       ></v-rating>
     </div>
   </div>
+  <!-- отображает поставленный рейтинг и дает возможность его удалить -->
   <div class="cancel-evaluation" v-else>
     <button
       class="button"
@@ -56,21 +49,20 @@ export default {
     },
     show: {
       type: Boolean,
-      required:true
+      required: true,
     },
-    id:{
-      type:Number,
-      required:true
-    }
+    movie: {
+      type: Object,
+      required: true,
+    },
   },
   emits: ["update:modelValue", "updateRating", "deleteRating", "changeShow"],
   methods: {
-    updateRating(event) {
-      this.$emit("update:modelValue", event);
-    },
+    //удаление рейтинга. ищем в массиве с избранными фильмами id соответствующий текущему фильму
+    //и удаляем его, обновляем modelValue
     deleteRating() {
       this.storage.favMovies.forEach((el, index) => {
-        if (el.id == this.id) {
+        if (el.id == this.movie.id) {
           if (el.liked == 1) {
             delete el.userRating;
           } else {
@@ -83,6 +75,34 @@ export default {
     changeShow() {
       this.$emit("changeShow");
     },
+    updateRating(event) {
+      this.$emit("update:modelValue", event);
+    },
+  },
+  watch: {
+    //следим за изменением рейтинга
+    modelValue() {
+      if (this.modelValue != 0) {
+        let flag = 0;
+        //если в БД уже есть фильм с таким id и текущий рейтинг !=0 то
+        //перезаписываем существующий рейтинг
+        this.storage.favMovies.forEach((el) => {
+          if (el.id == this.movie.id) {
+            el.userRating = this.modelValue;
+            flag = 1;
+          }
+        });
+        //если фильма с таким id нет и рейтинг != 0 то добавляем новый фильм в БД
+        //с полем рейтинг и соответстующим значением
+        if (flag == 0) {
+          this.storage.favMovies.push(this.movie);
+          this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
+            this.modelValue;
+        }
+        //если рейтинг = 0 (он удален засчет нажатия на крестик), то этот случай
+        //обрабатывается в deleteRating
+      }
+    },
   },
 };
 </script>
@@ -91,7 +111,7 @@ export default {
 .evaluation {
   position: relative;
 }
-.stars__items{
+.stars__items {
   position: absolute;
   top: 32px;
   left: -200px;

@@ -1,22 +1,18 @@
+<!-- рейтинг и количество голосов на кинопоиске -->
+
 <template>
   <div class="rating">
     <span
       :class="{
         rating__number: true,
         rating__number_gold: rating.toFixed(1) >= 8,
-        rating__number_green:
-        rating.toFixed(1) >= 7 && rating.toFixed(1) < 8,
+        rating__number_green: rating.toFixed(1) >= 7 && rating.toFixed(1) < 8,
         rating__number_red: rating.toFixed(1) < 6,
       }"
-      v-if="rating > 0"
       >{{ rating.toFixed(1) }}</span
     >
-    <span v-else> — </span>
 
-    <span class="raing__votes" v-if="votes> 0">{{
-      numberWithSpaces(votes)
-    }}</span>
-    <span v-else> — </span>
+    <span class="raing__votes">{{ numberWithSpaces(votes) }}</span>
   </div>
 </template>
 
@@ -34,10 +30,12 @@ export default {
     },
   },
   methods: {
+    //делит число на разряды чтобы было легче воспринимать число
     numberWithSpaces(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     },
   },
+  
 };
 </script>
 

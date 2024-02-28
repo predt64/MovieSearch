@@ -1,7 +1,9 @@
 <template>
+  <!-- навигация -->
   <my-navbar :main="1" />
 
   <header class="header">
+    <!-- поиск -->
     <my-search v-model="movieCurrent" @search="search">
       <p class="header__title">Fast. Convinient. Reliable.</p>
       <p class="header__subtitle">
@@ -11,11 +13,12 @@
   </header>
 
   <main class="main">
-
-    <div 
+    <!-- кнопки для пагинации и окно для выбора типа сортировки, если сейчас происходит 
+      запрос на сервер или кол-во найденных фильмов = 0 то не отображаются -->
+    <div
       class="pages-and-select__wrapper"
       v-if="!storage.loader && storage.movies.length > 0"
-      >
+    >
       <movie-pages color="white" v-model="currentPage" />
       <my-select
         v-model="selectedSort"
@@ -23,23 +26,24 @@
         class="select"
       />
     </div>
-
+    <!-- пока идет загрузка данных отображаем loader -->
     <my-loader v-if="storage.loader" class="loader" />
+    <!-- итерируемся по массиву полученных из запроса фильмов -->
     <movie-item
       v-else-if="storage.movies.length > 0"
       v-for="movie in storage.movies"
       :key="movie.id"
       :movie="movie"
-      @addedToFavorite="addToFavorite(id)"
     />
+    <!-- если массив фильмов пуст -->
     <p v-else class="main__error">
       Нет совпадений(ಥ﹏ಥ)<br />попробуйте еще раз
     </p>
-
+    <!-- для удобства блок для пагнации внизу страницы -->
     <movie-pages
       v-if="!storage.loader && storage.movies.length > 0"
       color="black"
-      :request="movieCurrent"
+      v-model="currentPage"
     />
   </main>
 </template>
@@ -72,6 +76,8 @@ export default {
     };
   },
   methods: {
+    //при поиске сбрасываем текующую страницу и вид сортировки, вызываем функцию
+    //getMovies() из storage
     search() {
       this.selectedSort = "По умолчанию";
       this.currentPage = 1;
@@ -92,24 +98,32 @@ export default {
     // },
   },
   watch: {
+    //криво реализованная сортировка. с обычным html <select> можно
+    //передавать в него объект с полями name и value, и уже исходя из
+    //value осуществлять соответствующую сортировку, но с vuetify <v-select> 
+    //так не получится, т.к. он ждет на вход именно массив, а не объект, так что
+    //пришлось сделать такую не очень красивую реализацию. Возможно я что то не понял
     selectedSort() {
-        if (this.selectedSort != "По умолчанию") {
-          this.currentPage = 1;
-          if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
-          else if (this.selectedSort == "По хронометражу")
-            this.sortValue = "movieLength";
-          else this.sortValue = "year";
-          this.storage.getMovies(this.movieCurrent, 1, this.sortValue);
-        }
+      if (this.selectedSort != "По умолчанию") {
+        this.currentPage = 1;
+        if (this.selectedSort == "По рейтингу") this.sortValue = "rating.kp";
+        else if (this.selectedSort == "По хронометражу")
+          this.sortValue = "movieLength";
+        else this.sortValue = "year";
+        this.storage.getMovies(this.movieCurrent, 1, this.sortValue);
+      }
     },
+    //следим за изменением страницы, если она поменялась делаем запрос на сервер
+    //с соответсвующим параметром _page=
     currentPage() {
-        this.storage.getMovies(
-          this.movieCurrent,
-          this.currentPage,
-          this.sortValue
-        );
+      this.storage.getMovies(
+        this.movieCurrent,
+        this.currentPage,
+        this.sortValue
+      );
     },
   },
+  //при создании страницы вызываем поиск фильмов без входных параметров
   mounted() {
     this.storage.getMovies("");
   },

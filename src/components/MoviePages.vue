@@ -1,3 +1,4 @@
+<!-- блок с цифрами для пагинации -->
 <template>
   <div class="pages__wrapper">
     <v-pagination

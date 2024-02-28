@@ -1,3 +1,4 @@
+<!-- выбор сортировки -->
 <template>
   <v-select
     placeholder="По умолчанию"

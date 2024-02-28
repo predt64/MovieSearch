@@ -17,6 +17,7 @@ export default createVuetify({
     themes: {
       light: {
         colors: {
+          //для темной темы у v-select
           primary: '#1867C0',
           secondary: '#5CBBF6',
           surface: '#575757',

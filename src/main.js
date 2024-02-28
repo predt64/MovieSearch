@@ -16,7 +16,7 @@ import { createApp } from 'vue'
 import components from '@/components/UI'
 
 const app = createApp(App)
-
+//регистрация UI компонентов
 components.forEach(component => {
   app.component(component.name, component)
 })

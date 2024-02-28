@@ -1,12 +1,15 @@
+<!-- навигационная панель -->
+
 <template>
   <div class="navbar__upper-wrapper">
     <div class="navbar__wrapper">
       <div class="navbar">
+        <!-- при клике на лого перекидывает на главную страницу-->
         <router-link to="/" class="navbar__title" @click="refresh('/')">
           <img class="logo" src="@/img/navbar.png" alt="logo" />
           <div class="navbar__title-main"><strong>Movie</strong>Search</div>
         </router-link>
-
+        <!-- то же самое что с лого -->
         <div class="navbar__references">
           <router-link
             to="/"
@@ -17,7 +20,7 @@
             @click="refresh('/')"
             >Главная</router-link
           >
-
+          <!-- переход на страницу с избранными и оцененными тайтлами -->
           <router-link
             to="/favourite"
             :class="{
@@ -37,6 +40,7 @@
 import { useStorage } from "@/store/app.js";
 
 export default {
+  //пропсы чтобы страница, на которой находишься подсвечивалось
   props: {
     fav: {
       type: Number,
@@ -52,6 +56,10 @@ export default {
     return { storage};
   },
   methods: {
+    //если нажать на ссылку той же страницы где сейчас находишься, то она перезагрузится.
+    //думал о том, чтобы вручную все переменные изменять и эмитить для этого соответствующее
+    //событие, но location.reload() вроде справляется, т.к. нужные данные все равно сохраняюься
+    //в local.storage()
     refresh(currentPath) {
       if (currentPath == this.$route.path) location.reload();
     },

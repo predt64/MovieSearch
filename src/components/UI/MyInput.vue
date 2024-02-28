@@ -32,6 +32,7 @@ export default {
   },
 
   methods: {
+    //если кликнули на лупу или нажали enter начинаем поиск фильма
     search() {
       this.$emit("search");
     },

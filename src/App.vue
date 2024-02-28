@@ -8,7 +8,4 @@ export default{
 </script>
 
 <style lang="scss">
-.v-application__wrap{
-  background-color: #ffffff
-}
 </style>

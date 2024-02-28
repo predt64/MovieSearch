@@ -1,10 +1,12 @@
+<!-- страничка с более подробной информацией о фильме -->
 <template>
   <my-navbar />
   <my-loader v-if="storage.loader" />
+  <!-- закрытие оценки фильма -->
   <div class="wrapper" v-else @click="show = false">
     <div class="movie">
-      <!-- очень по-долгу картинки иногда грузятся, либо у меня интернет медленный,
-      либо картинки много весят, либо я что-то не так сделала -->
+      <!-- по-долгу картинки иногда грузятся, либо у меня интернет медленный,
+      либо картинки много весят, либо я что-то не так сделал  -->
       <div class="movie__poster">
         <img
           :src="movie.poster.previewUrl"
@@ -18,7 +20,7 @@
           }}</span>
         </p>
       </div>
-
+      <!-- информация -->
       <div class="info">
         <div class="info__main">
           <p class="info__main-name">
@@ -85,23 +87,21 @@
           <my-rating
             v-model="rating"
             :show="show"
-            @changeShow="this.show = !this.show"
-            :id="movie.id"
+            @changeShow="show = !show"
+            :movie="storage.movieInfo"
             class="rating__item"
           />
         </div>
+        <!-- похожие фильмы -->
         <div class="similar">
           <p class="similar__title">Схожее:</p>
+          <!-- фильмы берем из массива в storage -->
           <div
             class="similar__item"
             v-for="similarMovie in storage.similarMovies"
             :key="similarMovie.id"
           >
-            <!-- но в поисковой строке остается id изначального фильма. а если использовать router-link,
-          то id с этой страницы динамически не подхватывает изменившийся в поисквовй строке id 
-          и следовательно страница не перерендеревается, разные варианты попробовал, 
-          типа watch $route.params.id, или изменение id в поисковой строке, а затем обновление 
-          старницы через location.reload(). но ничего особо не вышло. Наверное есть какое-то умное решение -->
+          <!-- переход к следующему фильму -->
             <div @click="nextMovie(similarMovie.id)" class="link">
               <img
                 :src="similarMovie.poster.previewUrl"
@@ -131,6 +131,7 @@ export default {
   },
   data() {
     return {
+      // при первом переходе на страницу с полной информацией id берем из переданных параметров
       id: this.$route.params.id,
       liked: -1,
       show: false,
@@ -139,10 +140,13 @@ export default {
     };
   },
   methods: {
+    //переход к следующему фильму (по сути и без router.push() можно, но тогда не
+    //обновляется id в поисковой строке) и обновление id текущего фильма
     nextMovie(id) {
       this.$router.push({ name: "movie", params: { id: `${id}` } });
       this.id = id;
     },
+    //узнаем, есть поставленный рейтинг и лайк у текущего фильма
     getRating() {
       let flag = 0;
       this.storage.favMovies.forEach((el) => {
@@ -165,29 +169,23 @@ export default {
     },
   },
   watch: {
-    rating() {
-      let flag = 0;
-      this.storage.favMovies.forEach((el) => {
-        if (el.id == this.movie.id) {
-          if (this.rating != 0) el.userRating = this.rating;
-          flag = 1;
-        }
-      });
-      if (flag == 0 && this.rating != 0) {
-        this.storage.favMovies.push(this.movie);
-        this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
-          this.rating;
-      }
-    },
+    //следим за изменением id (он изменяется в nextMovie() при переходе к
+    //следующему фильму), вызываем функцию с поиском информации о новом фильме.
+    //async т.к. movie становился storage.movieInfo до обновления последнего,
+    //что нехорошо
     async id() {
-      await this.storage.getSimilarMovies(this.id);
+      await this.storage.getMovieInfo(this.id);
       this.movie = this.storage.movieInfo;
       this.getLiked();
       this.getRating();
     },
   },
+  //при создании страницы ищем информацию по фильму. именно created(),
+  //т.к. как я понял, оно вызывается еще до рендера страницы, что нам и надо,
+  //т.к. без этого страница начнет рендер а данные с сервера еще не успеют прийти.
+  //async использовал из тех же соображений что и с async id в watch
   async created() {
-    await this.storage.getSimilarMovies(this.id);
+    await this.storage.getMovieInfo(this.id);
     this.movie = this.storage.movieInfo;
     this.getLiked();
     this.getRating();

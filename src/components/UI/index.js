@@ -1,3 +1,6 @@
+
+//глобальная регистрация UI компонентов
+
 import MyInput from "@/components/UI/MyInput.vue";
 import MyLoader from "@/components/UI/MyLoader.vue";
 import MySelect from "@/components/UI/MySelect.vue";

@@ -1,3 +1,4 @@
+<!-- пока выполняется запрос с сервера отображается loader -->
 <template>
   <div class="lds-facebook">
     <div></div>
