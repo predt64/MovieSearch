@@ -67,6 +67,7 @@ export const useStorage = defineStore("storage", () => {
     movieInfo.value = data;
     //сохраняем все похожие фильмы в переменную
     const similarMoviesId = data.similarMovies;
+    console.log(res.json())
     //убираем прошлые схожие фильмы из хранилища
     similarMovies.value = [];
     
@@ -77,11 +78,12 @@ export const useStorage = defineStore("storage", () => {
     //Отображаем 3 схожих фильма. Цикл останавливается когда нашел 3 фильма в моей
     //БД, если же не нашел или нашел меньше 3 штук, то берем их случайно.
     for (let i = 0; i < similarMoviesId.length; i++) {
-      const response = await fetch(
+      const response = await fetch( 
         `http://localhost:3031/docs?id=${similarMoviesId[i].id}`
       );
       const similarData = await response.json();
-      if (similarData) {
+      //similarData.length т.к. нам возвращается массив
+      if (similarData.length) {
         similarMovies.value.push(similarData[0]);
       }
       if (similarMovies.value.length == 3) break;
