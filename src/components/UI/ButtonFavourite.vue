@@ -1,11 +1,11 @@
 <!-- кнопка добавления в избранное -->
 <template>
   <div>
-    <button class="button" @click="addToFavorite">
+    <v-btn class="button" @click="addToFavorite">
       <span class="material-icons heart" :class="[{ heart_red: liked }]">
         favorite</span>
       В избранное
-    </button>
+    </v-btn>
   </div>
 </template>
 
@@ -69,10 +69,8 @@ export default {
 <style lang="scss" scoped>
 .button {
   background-color: rgb(209, 209, 177);
-  padding: 5px 12px;
+  color: black;
   border-radius: 18px;
-  display: flex;
-  align-items: center;
   transition: 0.2s;
 }
 .button:hover {

@@ -10,6 +10,7 @@
         @input="updateInput"
         @search="search"
         :value="modelValue"
+        :loading="loading"
       />
     </div>
   </div>
@@ -25,6 +26,10 @@ export default {
       type: Number,
       default: 0,
     },
+    loading:{
+      type: Boolean,
+      required: true,
+    }
   },
   methods: {
     search() {

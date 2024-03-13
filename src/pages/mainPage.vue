@@ -4,7 +4,11 @@
 
   <header class="header">
     <!-- поиск -->
-    <my-search v-model="movieCurrent" @search="search">
+    <my-search
+      v-model="movieCurrent"
+      @search="search"
+      :loading="storage.loader"
+    >
       <p class="header__title">Fast. Convinient. Reliable.</p>
       <p class="header__subtitle">
         Unlock the magic of movies with our ultimate Movie Searcher!
@@ -17,9 +21,9 @@
       запрос на сервер или кол-во найденных фильмов = 0 то не отображаются -->
     <div
       class="pages-and-select__wrapper"
-      v-if="!storage.loader && storage.movies.length > 0"
+      v-if="storage.movies.length > 0"
     >
-      <movie-pages color="white" v-model="currentPage" />
+      <movie-pages v-model="currentPage" />
       <my-select
         v-model="selectedSort"
         :options="selectOptions"
@@ -27,8 +31,15 @@
       />
     </div>
     <!-- пока идет загрузка данных отображаем loader -->
-    <my-loader v-if="storage.loader" class="loader" />
     <!-- итерируемся по массиву полученных из запроса фильмов -->
+      <v-continer  v-if="storage.loader">
+        <v-row v-for="index in 25" :key="index">
+          <v-col>
+            <v-skeleton-loader :loading="1" height="150" type="image">
+            </v-skeleton-loader>
+          </v-col>
+        </v-row>
+      </v-continer>
     <movie-item
       v-else-if="storage.movies.length > 0"
       v-for="movie in storage.movies"
@@ -41,8 +52,7 @@
     </p>
     <!-- для удобства блок для пагнации внизу страницы -->
     <movie-pages
-      v-if="!storage.loader && storage.movies.length > 0"
-      color="black"
+      v-if="storage.movies.length > 0"
       v-model="currentPage"
     />
   </main>
@@ -83,24 +93,11 @@ export default {
       this.currentPage = 1;
       this.storage.getMovies(this.movieCurrent);
     },
-
-    //изначальная функция для 'обновления' страницы при нажатии на лого или 'главная',
-    //currentlyRefreshing использовался чтобы не триггерить watch и не вызывать
-    //getMovies() несколько раз, но затем я наешел функцию location.reload()
-    //и заменил данный фрагмент кода.
-
-    // refresh() {
-    //   this.currentlyRefreshing = 1;
-    //   this.currentPage = 1;
-    //   this.movieCurrent = "";
-    //   this.selectedSort = "По умолчанию";
-    //   this.storage.getMovies("");
-    // },
   },
   watch: {
     //криво реализованная сортировка. с обычным html <select> можно
     //передавать в него объект с полями name и value, и уже исходя из
-    //value осуществлять соответствующую сортировку, но с vuetify <v-select> 
+    //value осуществлять соответствующую сортировку, но с vuetify <v-select>
     //так не получится, т.к. он ждет на вход именно массив, а не объект, так что
     //пришлось сделать такую не очень красивую реализацию. Возможно я что то не понял
     selectedSort() {
@@ -148,14 +145,7 @@ export default {
   cursor: pointer !important;
 }
 .main {
-  background-color: white !important;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 10%,
-    rgba(0, 0, 0, 0.4) 90%,
-    rgba(0, 0, 0, 0.3) 100%
-  );
-  background-repeat: no-repeat;
+  background-color: black !important;
   min-height: 371px;
 }
 .main__error {
@@ -176,5 +166,9 @@ export default {
 .select {
   position: absolute;
   right: 0px;
+}
+.v-skeleton-loader {
+  display: block;
+  background-color: black;
 }
 </style>

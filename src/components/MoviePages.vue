@@ -6,7 +6,7 @@
       @update:modelValue="updatePage"
       :length="this.storage.totalPages"
       :total-visible="6"
-      :color="color"
+      color="white"
     ></v-pagination>
   </div>
 </template>
@@ -16,10 +16,6 @@ import { useStorage } from "@/store/app.js";
 export default {
   emits: ["updatePage", "update:modelValue"],
   props: {
-    color: {
-      type: String,
-      required: true,
-    },
     modelValue: {
       type: Number,
     },

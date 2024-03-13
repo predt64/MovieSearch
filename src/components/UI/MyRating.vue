@@ -3,10 +3,14 @@
   <div class="evaluation" v-if="modelValue == 0">
     <!-- .stop чтобы прекратить всплытие события в компоненте MovieItem show=0,
     т.к. без этого панелька со звездочками не откроется -->
-    <button class="button" @click.stop="changeShow" title="Поставить оценку">
+    <v-btn
+      class="button" 
+      @click.stop="changeShow" 
+      title="Поставить оценку"
+    >
       <!-- иконка звезды -->
       <span class="material-icons icon icon--star">star</span>
-    </button>
+    </v-btn>
     <div class="stars">
       <v-rating
         v-if="show == 1"
@@ -20,7 +24,7 @@
   </div>
   <!-- отображает поставленный рейтинг и дает возможность его удалить -->
   <div class="cancel-evaluation" v-else>
-    <button
+    <v-btn
       class="button"
       title="Удалить поставленную оценку"
       @click="deleteRating"
@@ -29,7 +33,7 @@
         {{ modelValue * 2 }}
       </div>
       <span class="icon--cross material-icons icon">close</span>
-    </button>
+    </v-btn>
   </div>
 </template>
 
@@ -113,13 +117,10 @@ export default {
 }
 .stars__items {
   position: absolute;
-  top: 32px;
-  left: -200px;
+  top: 35px;
+  left: -185px;
 }
 .icon {
-  background-color: rgb(209, 209, 177);
-  padding: 5px;
-  border-radius: 17px;
   transition: 0.2s;
 }
 
@@ -129,19 +130,21 @@ export default {
 .icon--cross:hover::before {
   transition: 0.2s;
 }
-.icon--cross:hover {
-  color: red;
-  transition: 0.2s;
-}
 .cancel-evaluation__rating {
-  width: 34px;
-  height: 34px;
   color: #19b467;
   font-weight: 700;
 }
+.button{
+  background-color: rgb(209, 209, 177);
+  border-radius: 17px;
+  transition: .2s;
+}
 .button:hover {
-  transform: scale(1.1);
+  transform: scale(1.3);
   transition: 0.2s;
+}
+.icon--star{
+  color: black ;
 }
 .button:hover .icon--star {
   color: rgb(255, 231, 92);
@@ -155,5 +158,6 @@ export default {
 }
 .button:hover .icon--cross {
   display: block;
+  color: red;
 }
 </style>
