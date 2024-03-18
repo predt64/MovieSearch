@@ -19,10 +19,7 @@
   <main class="main">
     <!-- кнопки для пагинации и окно для выбора типа сортировки, если сейчас происходит 
       запрос на сервер или кол-во найденных фильмов = 0 то не отображаются -->
-    <div
-      class="pages-and-select__wrapper"
-      v-if="storage.movies.length > 0"
-    >
+    <div class="pages-and-select__wrapper" v-if="storage.movies.length > 0">
       <movie-pages v-model="currentPage" />
       <my-select
         v-model="selectedSort"
@@ -32,27 +29,23 @@
     </div>
     <!-- пока идет загрузка данных отображаем loader -->
     <!-- итерируемся по массиву полученных из запроса фильмов -->
-      <v-continer  v-if="storage.loader">
-        <v-row v-for="index in 25" :key="index">
-          <v-col>
-            <v-skeleton-loader :loading="1" height="150" type="image">
-            </v-skeleton-loader>
-          </v-col>
-        </v-row>
-      </v-continer>
-    <movie-item
-      v-else-if="storage.movies.length > 0"
-      v-for="movie in storage.movies"
-      :key="movie.id"
-      :movie="movie"
-    />
+    <div class="loader-screen" v-if="storage.loader">
+      <my-loader />
+    </div>
+    <div v-if="storage.movies.length > 0">
+      <movie-item
+        v-for="movie in storage.movies"
+        :key="movie.id"
+        :movie="movie"
+      />
+    </div>
     <!-- если массив фильмов пуст -->
-    <p v-else class="main__error">
+    <p v-else-if="!storage.loader" class="main__error">
       Нет совпадений(ಥ﹏ಥ)<br />попробуйте еще раз
     </p>
     <!-- для удобства блок для пагнации внизу страницы -->
     <movie-pages
-      v-if="storage.movies.length > 0"
+      v-if="!storage.loader && storage.movies.length > 0"
       v-model="currentPage"
     />
   </main>
@@ -128,6 +121,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.loader-screen {
+  position: absolute;
+  background-color: rgb(71, 71, 71, 0.7);
+  width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  min-height: 645vh;
+  z-index: 2;
+}
 .header__title {
   font-size: 50px;
   font-weight: 800;

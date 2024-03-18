@@ -1,9 +1,8 @@
 <!-- кнопка добавления в избранное -->
 <template>
   <div>
-    <v-btn class="button" @click="addToFavorite">
-      <span class="material-icons heart" :class="[{ heart_red: liked }]">
-        favorite</span>
+    <v-btn class="button" @click="addToFavorite"> 
+      <v-icon class="heart" :class="[{ heart_red: liked }]">mdi-heart</v-icon>
       В избранное
     </v-btn>
   </div>

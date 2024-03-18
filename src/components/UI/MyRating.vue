@@ -9,7 +9,7 @@
       title="Поставить оценку"
     >
       <!-- иконка звезды -->
-      <span class="material-icons icon icon--star">star</span>
+      <v-icon class="icon icon--star">mdi-star</v-icon>
     </v-btn>
     <div class="stars">
       <v-rating
@@ -121,6 +121,7 @@ export default {
   left: -185px;
 }
 .icon {
+  font-size: 22px;
   transition: 0.2s;
 }
 

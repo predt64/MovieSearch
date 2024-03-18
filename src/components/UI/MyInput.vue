@@ -6,7 +6,12 @@
         понадобилось много времени(старое значение продолжало отображаться на странице). В итоге
         нашел такое решение, с передачей пропсом желаемого перерисовываемого значения и биндом его 
         к input в качестве value -->
-    <v-card class="mx-auto" variant="outlined" color="transparent" max-width="500">
+    <v-card
+      class="mx-auto"
+      variant="outlined"
+      color="transparent"
+      max-width="500"
+    >
       <v-card-text>
         <v-text-field
           :value="value"
@@ -23,8 +28,7 @@
           @keyup.enter="search"
           type="text"
           class="input-field"
-        >
-        </v-text-field>
+        />
       </v-card-text>
     </v-card>
   </div>
@@ -53,7 +57,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-card-text{
+.v-card-text {
   background-color: transparent;
 }
 .search__box {
