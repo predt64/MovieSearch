@@ -53,7 +53,7 @@
       <div class="actions">
         <rating-number :rating="movie.rating.kp" :votes="movie.votes.kp" />
 
-        <button-favourite
+        <buttonFavourite
           @liked="liked = 1"
           @disliked="liked = 0"
           :liked="liked"
@@ -61,7 +61,7 @@
         />
         <!-- привязваем текущий статус отображения звезд для оценивания фильма и
              подписываемся на событие, если их сокрытия из самого компонента -->
-        <my-rating
+        <myRating
           v-model="rating"
           :show="show"
           @changeShow="show = !show"

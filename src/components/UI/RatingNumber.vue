@@ -2,15 +2,7 @@
 
 <template>
   <div class="rating">
-    <span
-      :class="{
-        rating__number: true,
-        rating__number_gold: rating.toFixed(1) >= 8,
-        rating__number_green: rating.toFixed(1) >= 7 && rating.toFixed(1) < 8,
-        rating__number_red: rating.toFixed(1) < 6,
-      }"
-      >{{ rating.toFixed(1) }}</span
-    >
+    <span :class="'rating__number ' + ratingColor">{{ rating.toFixed(1) }}</span>
 
     <span class="raing__votes">{{ numberWithSpaces(votes) }}</span>
   </div>
@@ -18,7 +10,7 @@
 
 <script>
 export default {
-  name: "rating-number",
+  name: "ratingNumber",
   props: {
     rating: {
       type: Number,
@@ -35,7 +27,17 @@ export default {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     },
   },
-  
+  computed: {
+    ratingColor() {
+      if (this.rating.toFixed(1) >= 8) {
+        return "rating__number_gold";
+      } else if (this.rating.toFixed(1) >= 7 && this.rating.toFixed(1) < 8) {
+        return "rating__number_green";
+      } else {
+        return "rating__number_red";
+      }
+    },
+  },
 };
 </script>
 

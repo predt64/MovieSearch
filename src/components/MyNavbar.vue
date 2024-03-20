@@ -5,9 +5,17 @@
     <div class="navbar__wrapper">
       <div class="navbar">
         <!-- при клике на лого перекидывает на главную страницу-->
-        <router-link to="/" class="navbar__title" @click="refresh('/')">
-          <img class="logo" src="@/img/navbar.png" alt="logo" />
-          <div class="navbar__title-main"><strong>Movie</strong>Search</div>
+        <router-link 
+          to="/" 
+          class="navbar__title"
+          @click="refresh('/')"
+          >
+            <img 
+              class="logo" 
+              src="@/img/navbar.png" 
+              alt="logo"
+            />
+            <div class="navbar__title-main"><strong>Movie</strong>Search</div>
         </router-link>
         <!-- то же самое что с лого -->
         <div class="navbar__references">
@@ -18,8 +26,7 @@
               active: main,
             }"
             @click="refresh('/')"
-            >Главная</router-link
-          >
+            >Главная</router-link>
           <!-- переход на страницу с избранными и оцененными тайтлами -->
           <router-link
             to="/favourite"
@@ -28,8 +35,7 @@
               active: fav,
             }"
             @click="refresh('/favourite')"
-            >Закладки</router-link
-          >
+            >Закладки</router-link>
         </div>
       </div>
     </div>
@@ -53,7 +59,7 @@ export default {
   },
   setup() {
     const storage = useStorage();
-    return { storage};
+    return { storage };
   },
   methods: {
     //если нажать на ссылку той же страницы где сейчас находишься, то она перезагрузится.

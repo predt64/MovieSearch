@@ -4,14 +4,39 @@
       <slot></slot>
     </div>
     <div class="search__input">
-      <my-input
-        v-if="!disableSearch"
-        :model-value="modelValue"
-        @input="updateInput"
-        @search="search"
-        :value="modelValue"
-        :loading="loading"
-      />
+      <div class="search__box">
+    <!-- очень долго не мог разобраться, как перерендерить содержимое инпута в 
+        дочернем компоненте из родительского. Само значение изменить было легко,
+        но на то, чтобы сделать так, чтобы при этом еще отображаемое содержимое перерисовывлось,
+        понадобилось много времени(старое значение продолжало отображаться на странице). В итоге
+        нашел такое решение, с передачей пропсом желаемого перерисовываемого значения и биндом его 
+        к input в качестве value -->
+    <v-card
+      class="mx-auto"
+      variant="outlined"
+      color="transparent"
+      max-width="500"
+    >
+      <v-card-text>
+        <v-text-field
+          :value="modelValue"
+          :loading="loading"
+          :model-value="modelValue"
+          append-inner-icon="mdi-magnify"
+          density="compact"
+          label="Введите название фильма"
+          variant="solo"
+          hide-deatails
+          single-line
+          @update:modelValue="updateInput"
+          @click:append-inner="search"
+          @keyup.enter="search"
+          type="text"
+          class="input-field"
+        />
+      </v-card-text>
+    </v-card>
+  </div>
     </div>
   </div>
 </template>
@@ -36,7 +61,7 @@ export default {
       this.$emit("search");
     },
     updateInput(event) {
-      this.$emit("update:modelValue", event.target.value);
+      this.$emit("update:modelValue", event);
     },
   },
 };
@@ -65,5 +90,18 @@ export default {
 .title {
   text-align: center;
   color: white;
+}
+
+
+.v-card-text {
+  background-color: transparent;
+}
+.search__box {
+  white-space: nowrap;
+  position: relative;
+  margin: 0 auto;
+}
+.input-field {
+  width: 450px;
 }
 </style>

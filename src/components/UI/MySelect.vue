@@ -7,13 +7,12 @@
     :items="options"
     class="select-component"
     bg-color="rgb(231, 231, 204)"
-  >
-  </v-select>
+  />
 </template>
 
 <script>
 export default {
-  name: "my-select",
+  name: "mySelect",
   emits: ["changeOption","update:model-value"],
   props: {
     modelValue: {

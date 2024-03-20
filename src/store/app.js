@@ -67,7 +67,6 @@ export const useStorage = defineStore("storage", () => {
     movieInfo.value = data;
     //сохраняем все похожие фильмы в переменную
     const similarMoviesId = data.similarMovies;
-    console.log(res.json())
     //убираем прошлые схожие фильмы из хранилища
     similarMovies.value = [];
     

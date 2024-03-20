@@ -13,13 +13,13 @@
     </v-btn>
     <div class="stars">
       <v-rating
-        v-if="show == 1"
+        v-if="show"
         :model-value="modelValue"
         @update:model-value="updateRating"
         class="stars__items"
         half-increments
         hover
-      ></v-rating>
+      />
     </div>
   </div>
   <!-- отображает поставленный рейтинг и дает возможность его удалить -->
@@ -45,7 +45,7 @@ export default {
     const storage = useStorage();
     return { storage };
   },
-  name: "my-rating",
+  name: "myRating",
   props: {
     modelValue: {
       type: Number,
@@ -65,15 +65,12 @@ export default {
     //удаление рейтинга. ищем в массиве с избранными фильмами id соответствующий текущему фильму
     //и удаляем его, обновляем modelValue
     deleteRating() {
-      this.storage.favMovies.forEach((el, index) => {
-        if (el.id == this.movie.id) {
-          if (el.liked == 1) {
-            delete el.userRating;
+       const favouriteMovie= this.storage.favMovies.find(el=>el.id===this.movie.id)
+          if (favouriteMovie.liked == 1) {
+            delete favouriteMovie.userRating;
           } else {
-            this.storage.favMovies.splice(index, 1);
+            this.storage.favMovies=this.storage.favMovies.filter(el=>el.id!==favouriteMovie.id)
           }
-        }
-      });
       this.$emit("update:modelValue", 0);
     },
     changeShow() {
@@ -87,18 +84,15 @@ export default {
     //следим за изменением рейтинга
     modelValue() {
       if (this.modelValue != 0) {
-        let flag = 0;
         //если в БД уже есть фильм с таким id и текущий рейтинг !=0 то
         //перезаписываем существующий рейтинг
-        this.storage.favMovies.forEach((el) => {
-          if (el.id == this.movie.id) {
-            el.userRating = this.modelValue;
-            flag = 1;
-          }
-        });
+        const favouriteMovie= this.storage.favMovies.find(el=>el.id===this.movie.id)
+        if(favouriteMovie){
+          favouriteMovie.userRating = this.modelValue
+        }
         //если фильма с таким id нет и рейтинг != 0 то добавляем новый фильм в БД
         //с полем рейтинг и соответстующим значением
-        if (flag == 0) {
+        else{
           this.storage.favMovies.push(this.movie);
           this.storage.favMovies[this.storage.favMovies.length - 1].userRating =
             this.modelValue;

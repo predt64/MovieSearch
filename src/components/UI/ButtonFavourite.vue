@@ -16,7 +16,7 @@ export default {
     const storage = useStorage();
     return { storage };
   },
-  name: "button-favourite",
+  name: "buttonFavourite",
   emits: ["liked", "disliked"],
   props: {
     liked: {
@@ -30,10 +30,9 @@ export default {
   },
   methods: {
     addToFavorite() {
-      let flag = 0;
+      let movieCurrent = this.storage.favMovies.find(f => f.id == this.movie.id)
       //проверяем есть ли уже фильм с таким id в базе и добавлен ли был в избранное
-      this.storage.favMovies.forEach((movieCurrent, index) => {
-        if (movieCurrent.id == this.movie.id) {
+        if (movieCurrent) {
           //если был лайк, то
           if (movieCurrent.liked == 1) {
             //если у фильма есть оценка, то только удаляем поле like
@@ -43,7 +42,7 @@ export default {
             }
             //если нет оценки, то удаляем чтобы не засорять память
             else {
-              this.storage.favMovies.splice(index, 1);
+              this.storage.favMovies=this.storage.favMovies.filter(el=>el.id!==movieCurrent.id)
               this.$emit("disliked");
             }
             //если была только оценка, а лайка не было, то добавляем в избранное
@@ -51,11 +50,9 @@ export default {
             movieCurrent.liked = 1;
             this.$emit("liked");
           }
-          flag = 1;
         }
-      });
       //если в 'БД' не было фильма с таким id
-      if (flag == 0) {
+      else{
         this.storage.favMovies.push(this.movie);
         this.storage.favMovies[this.storage.favMovies.length - 1].liked = 1;
         this.$emit("liked");

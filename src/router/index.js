@@ -4,16 +4,16 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    component: () => import("@/pages/mainPage.vue"),
+    component: () => import("@/pages/MainPage.vue"),
     alias: "/",
   },
   {
     path: "/favourite",
-    component: () => import("@/pages/favouriteMovies.vue"),
+    component: () => import("@/pages/FavouriteMoviesPage.vue"),
   },
   {
     path: "/movie/:id",
-    component: () => import("@/pages/movieFullInfo.vue"),
+    component: () => import("@/pages/MovieFullInfoPage.vue"),
     name:'movie'
   },
 ];

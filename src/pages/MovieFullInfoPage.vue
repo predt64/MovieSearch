@@ -11,7 +11,7 @@
       исправить-->
       <div class="movie__poster">
         <img
-          :src="movie.poster.previewUrl"
+          :src="movie.poster?.previewUrl"
           alt="logo"
           class="movie__poster-img"
         />
@@ -150,25 +150,13 @@ export default {
     },
     //узнаем, есть поставленный рейтинг и лайк у текущего фильма
     getRating() {
-      let flag = 0;
-      this.storage.favMovies.forEach((el) => {
-        if (el.id == this.movie.id && el.userRating != undefined) {
-          this.rating = el.userRating;
-          flag = 1;
-        }
-      });
-      if (flag == 0) this.rating = 0;
+      let favouriteMovie=this.storage.favMovies.find(el=>el.id===this.movie.id)
+      this.rating = favouriteMovie?.userRating!=undefined?favouriteMovie.userRating:0
     },
     getLiked() {
-      let flag = 0;
-      this.storage.favMovies.forEach((el) => {
-        if (el.id == this.movie.id && el.liked != undefined) {
-          this.liked = el.liked;
-          flag = 1;
-        }
-      });
-      if (flag == 0) this.liked = 0;
-    },
+      let favouriteMovie=this.storage.favMovies.find(el=>el.id===this.movie.id)
+      this.liked = favouriteMovie?.liked!=undefined?favouriteMovie.liked:0
+    }
   },
   watch: {
     //следим за изменением id (он изменяется в nextMovie() при переходе к
